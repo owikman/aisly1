@@ -840,17 +840,25 @@ function showFound(id){
   setTimeout(()=>{const el=document.querySelector('.ba-tile.hit');if(el)el.scrollIntoView({behavior:'smooth',block:'center'})},300);
 }
 
-function showFoundAnywhere(id){
+async function showFoundAnywhere(id){
   const item=items[id];
   if(!item)return;
   const aisle=item.aisle||{name:'Unknown Aisle'};
+
+  // Show immediately with what we have, then load the full store layout
   _renderFound(item.name, aisle, item.location_detail, []);
   document.getElementById('foundBack').onclick=()=>show('v-anywhere');
-  document.getElementById('floorPlan').innerHTML=`<div style="text-align:center;padding:20px">
-    <div style="font-size:13px;color:var(--t2);margin-bottom:14px">Open the store to see the full layout</div>
-    <button onclick="openStore('${item.store?.id}','${esc(item.store?.name||'')}')" style="background:var(--p);color:#fff;border:none;padding:11px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Open ${esc(item.store?.name||'Store')}</button>
-  </div>`;
+  document.getElementById('floorPlan').innerHTML='<div class="loading"><div class="spin"></div></div>';
   show('v-found');
+
+  // Fetch this store's aisles so we can show the bird's eye map
+  if(item.store?.id){
+    const {data}=await sb.from('aisles').select('id,name,description,position').eq('store_id',item.store.id).order('position');
+    if(data?.length){
+      _renderFound(item.name, aisle, item.location_detail, data);
+      setTimeout(()=>{const el=document.querySelector('.ba-tile.hit');if(el)el.scrollIntoView({behavior:'smooth',block:'center'})},300);
+    }
+  }
 }
 
 function _renderFound(name, aisle, locationDetail, aisleList){
