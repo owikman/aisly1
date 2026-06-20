@@ -269,6 +269,109 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* STORE VIEW LAYOUT */
+.store-body{display:flex;flex-direction:column;flex:1}
+.store-sidebar{flex-shrink:0}
+.store-main{flex:1;min-width:0}
+
+/* FOUND VIEW LAYOUT */
+.found-body{display:flex;flex-direction:column}
+.found-left{padding:0}
+.found-right{}
+
+/* DESKTOP */
+@media(min-width:768px){
+  /* Base */
+  .app{max-width:100%;box-shadow:none;background:var(--bg)}
+  .nav{padding:0 48px;height:64px;background:rgba(255,255,255,.95);max-width:none}
+  .nav-logo{font-size:24px}
+  .nav-link{font-size:14px;padding:9px 18px;border:1.5px solid var(--border);border-radius:100px}
+  .nav-link:hover{border-color:var(--p);color:var(--p)}
+
+  /* Home content wrapper */
+  .home-inner{max-width:1160px;margin:0 auto}
+
+  /* Hero */
+  .hero{padding:80px 48px}
+  .hero-inner{max-width:600px;margin:0 auto}
+  .hero h1{font-size:52px;letter-spacing:-2px}
+  .hero p{font-size:17px}
+  .hero-search{max-width:520px;margin:0 auto 16px}
+
+  /* Stats */
+  .stats-strip{border-left:none;border-right:none}
+  .stat-item{padding:24px 8px}
+  .stat-num{font-size:28px}
+  .stat-lbl{font-size:12px}
+
+  /* How it works */
+  .hiw{padding:40px 48px}
+  .hiw-steps{max-width:520px;margin:0 auto}
+  .hiw-icon{width:54px;height:54px;font-size:24px;border-radius:16px}
+  .hiw-text{font-size:13px}
+
+  /* Demo stores — 3 columns */
+  .demo-stores{grid-template-columns:repeat(3,1fr);max-width:1160px;margin:0 auto;padding:0 48px}
+  .demo-card{flex-direction:column;align-items:flex-start;gap:12px;padding:22px}
+  .demo-emoji{width:60px;height:60px;font-size:28px;border-radius:16px}
+  .demo-arrow{display:none}
+  .demo-name{font-size:16px}
+
+  /* Home sections */
+  .section{padding:28px 48px;box-sizing:border-box}
+  #v-home .section{max-width:1160px;margin:0 auto}
+
+  /* CTA card */
+  .cta-card{max-width:1160px;margin:28px auto 0;padding:36px 40px;display:flex;align-items:center;gap:40px;border-radius:24px}
+  .cta-card::before{width:240px;height:240px;top:-60px;right:-60px}
+  .cta-card::after{display:none}
+  .cta-title{font-size:24px;margin-bottom:6px}
+  .cta-sub{margin-bottom:0;max-width:380px}
+  .cta-btn{white-space:nowrap;flex-shrink:0}
+
+  /* Results — 2 col grid */
+  #v-results{background:var(--bg)}
+  #v-results .nav{background:var(--white)}
+  #v-results .section{max-width:1160px;margin:0 auto;padding:28px 48px}
+  #v-results .store-list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  #v-results .store-card{background:var(--white)}
+
+  /* Store page — sidebar layout */
+  #v-store{background:var(--bg)}
+  #v-store .nav{background:var(--white)}
+  .store-body{display:grid;grid-template-columns:280px 1fr;min-height:calc(100svh - 64px);max-width:1160px;margin:0 auto;background:var(--white);box-shadow:var(--sh)}
+  .store-sidebar{border-right:1px solid var(--border);overflow-y:auto;position:sticky;top:64px;height:calc(100svh - 64px)}
+  .store-sidebar .store-hdr{padding:24px 20px 18px;border-bottom:1px solid var(--border)}
+  .store-sidebar .store-hdr-name{font-size:19px}
+  .aisle-pills{flex-direction:column;padding:12px;gap:4px}
+  .aisle-pill{border-radius:10px;width:100%;text-align:left;white-space:normal}
+  .store-main{overflow-y:auto;background:var(--white)}
+  .item-search{margin:24px 24px 0}
+  .list-fab{right:calc(50% - 580px + 300px);transform:none}
+
+  /* Found page — 2 col */
+  #v-found{background:var(--bg)}
+  #v-found .nav{background:var(--white)}
+  .found-hero{padding:52px 48px}
+  .found-body{display:grid;grid-template-columns:1fr 1fr;max-width:1160px;margin:0 auto;background:var(--white);box-shadow:var(--sh)}
+  .found-left{padding:36px 32px 36px 40px}
+  .aisle-card{margin:0;box-shadow:none;border:1.5px solid var(--border)}
+  .found-right{padding:36px 40px 36px 32px;border-left:1px solid var(--border)}
+  .map-section{padding:0}
+  .map-label{margin-bottom:14px}
+
+  /* Anywhere */
+  #v-anywhere{background:var(--bg)}
+  #v-anywhere .nav{background:var(--white)}
+  #v-anywhere>div:last-child{max-width:860px;margin:0 auto;padding:28px 48px}
+
+  /* List view */
+  #v-list{background:var(--bg)}
+  #v-list .nav{background:var(--white)}
+  #v-list #listContent{max-width:640px;margin:0 auto;background:var(--white);min-height:60vh}
+  .list-actions-bar{max-width:640px;margin:0 auto}
+}
+
 /* MOBILE */
 @media(max-width:480px){
   .app{box-shadow:none}
@@ -429,20 +532,26 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
       <button class="nav-back" onclick="show('v-home')">←</button>
       <span class="nav-title" id="storeNavName"></span>
     </nav>
-    <div class="store-hdr">
-      <div class="store-hdr-name" id="storeName"></div>
-      <div class="store-hdr-meta">
-        <span class="store-hdr-badge">📍 <span id="storeCity"></span></span>
-        <span class="store-hdr-badge">🏷️ <span id="storeAisles"></span> aisles</span>
+    <div class="store-body">
+      <div class="store-sidebar">
+        <div class="store-hdr">
+          <div class="store-hdr-name" id="storeName"></div>
+          <div class="store-hdr-meta">
+            <span class="store-hdr-badge">📍 <span id="storeCity"></span></span>
+            <span class="store-hdr-badge">🏷️ <span id="storeAisles"></span> aisles</span>
+          </div>
+        </div>
+        <div class="aisle-pills" id="aislePills"></div>
+      </div>
+      <div class="store-main">
+        <div class="item-search">
+          <input id="itemQ" type="text" placeholder="What are you looking for?" autocomplete="off" autocorrect="off" oninput="debounceSearch()">
+          <button onclick="searchItems()">Find</button>
+        </div>
+        <div id="itemArea"></div>
+        <div style="height:80px"></div>
       </div>
     </div>
-    <div class="item-search">
-      <input id="itemQ" type="text" placeholder="What are you looking for?" autocomplete="off" autocorrect="off" oninput="debounceSearch()">
-      <button onclick="searchItems()">Find</button>
-    </div>
-    <div class="aisle-pills" id="aislePills"></div>
-    <div id="itemArea"></div>
-    <div style="height:80px"></div>
   </div>
 
   <!-- FOUND -->
@@ -456,18 +565,24 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
       <div class="found-eyebrow">You're looking for</div>
       <div class="found-name" id="foundName"></div>
     </div>
-    <div class="aisle-card">
-      <div class="aisle-card-label">Located in</div>
-      <div class="aisle-card-name" id="foundAisle"></div>
-      <div class="aisle-card-desc" id="foundAisleDesc"></div>
-      <div class="aisle-card-loc">
-        <span class="aisle-card-loc-icon">📍</span>
-        <span id="foundLoc"></span>
+    <div class="found-body">
+      <div class="found-left">
+        <div class="aisle-card">
+          <div class="aisle-card-label">Located in</div>
+          <div class="aisle-card-name" id="foundAisle"></div>
+          <div class="aisle-card-desc" id="foundAisleDesc"></div>
+          <div class="aisle-card-loc">
+            <span class="aisle-card-loc-icon">📍</span>
+            <span id="foundLoc"></span>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="map-section">
-      <div class="map-label">Store Layout</div>
-      <div class="floor-plan" id="floorPlan"></div>
+      <div class="found-right">
+        <div class="map-section">
+          <div class="map-label">Store Layout</div>
+          <div class="floor-plan" id="floorPlan"></div>
+        </div>
+      </div>
     </div>
     <div style="height:24px"></div>
   </div>
