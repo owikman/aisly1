@@ -218,28 +218,36 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   border-top:1px solid var(--border);font-size:14px;color:var(--t2)}
 .aisle-card-loc-icon{color:var(--p);flex-shrink:0;margin-top:1px}
 
-/* FLOOR PLAN */
+/* STORE MAP SECTION */
 .map-section{padding:22px 16px}
 .map-label{font-size:12px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px}
-.floor-plan{background:#f1f5f9;border-radius:16px;padding:14px;border:1.5px solid var(--border)}
-.floor-gate{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 0 12px;
-  font-size:12px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px}
-.floor-gate-line{flex:1;height:1px;background:var(--border)}
-.floor-aisle{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--white);
-  border-radius:10px;margin-bottom:6px;border:1.5px solid var(--border);transition:all .2s;position:relative}
-.floor-aisle:last-of-type{margin-bottom:0}
-.floor-aisle.hit{background:var(--p50);border-color:var(--p);box-shadow:0 0 0 2px rgba(79,70,229,.15)}
-.floor-num{width:26px;height:26px;border-radius:7px;background:var(--bg);border:1px solid var(--border);
-  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--t2);flex-shrink:0;transition:all .2s}
-.floor-aisle.hit .floor-num{background:var(--p);color:#fff;border-color:var(--p)}
-.floor-info{flex:1;min-width:0}
-.floor-name{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.floor-desc{font-size:11px;color:var(--t3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.floor-aisle.hit .floor-name{color:var(--p)}
-.floor-pin{font-size:18px;animation:pin-bounce .8s ease-in-out infinite;flex-shrink:0}
+
+/* BIRD'S EYE FLOOR PLAN */
+.birdseye{background:#dde3ea;border-radius:18px;padding:14px;border:3px solid #94a3b8;position:relative}
+.birdseye-gate{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 0;
+  font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:1px}
+.birdseye-gate-line{flex:1;height:2px;background:#94a3b8;border-radius:1px}
+.birdseye-path{height:10px;display:flex;align-items:center;justify-content:center;margin:4px 0}
+.birdseye-path-label{font-size:9px;color:#94a3b8;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.birdseye-grid{display:grid;gap:8px}
+.birdseye-row{display:contents}
+.ba-tile{background:#fff;border:2px solid #cbd5e1;border-radius:10px;padding:10px 6px 8px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;min-height:72px;transition:all .2s;position:relative}
+.ba-tile.hit{background:var(--p);border-color:var(--p);
+  box-shadow:0 0 0 3px rgba(79,70,229,.2),0 6px 20px rgba(79,70,229,.35);
+  animation:ba-glow 1.8s ease-in-out infinite}
+@keyframes ba-glow{
+  0%,100%{box-shadow:0 0 0 3px rgba(79,70,229,.2),0 6px 20px rgba(79,70,229,.35)}
+  50%{box-shadow:0 0 0 6px rgba(79,70,229,.1),0 8px 28px rgba(79,70,229,.5)}
+}
+.ba-num{font-size:10px;font-weight:800;color:#94a3b8;margin-bottom:4px;letter-spacing:.3px}
+.ba-tile.hit .ba-num{color:rgba(255,255,255,.65)}
+.ba-name{font-size:11px;font-weight:700;color:var(--text);line-height:1.25;word-break:break-word}
+.ba-tile.hit .ba-name{color:#fff}
+.ba-pin{font-size:16px;margin-top:5px;animation:pin-bounce .9s ease-in-out infinite}
 @keyframes pin-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-.floor-path{position:absolute;right:-1px;top:0;bottom:0;width:3px;background:rgba(79,70,229,.08);border-radius:0 10px 10px 0}
-.floor-aisle.hit .floor-path{background:rgba(79,70,229,.2)}
+.ba-empty{background:transparent;border:2px dashed rgba(148,163,184,.3);border-radius:10px;min-height:72px}
 
 /* ANYWHERE (cross-store) */
 .anywhere-group{margin-bottom:16px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
@@ -829,7 +837,7 @@ function showFound(id){
   _renderFound(item.name, aisle, item.location_detail, aisles);
   document.getElementById('foundBack').onclick=()=>show('v-store');
   show('v-found');
-  setTimeout(()=>{const el=document.querySelector('.floor-aisle.hit');if(el)el.scrollIntoView({behavior:'smooth',block:'center'})},300);
+  setTimeout(()=>{const el=document.querySelector('.ba-tile.hit');if(el)el.scrollIntoView({behavior:'smooth',block:'center'})},300);
 }
 
 function showFoundAnywhere(id){
@@ -838,7 +846,6 @@ function showFoundAnywhere(id){
   const aisle=item.aisle||{name:'Unknown Aisle'};
   _renderFound(item.name, aisle, item.location_detail, []);
   document.getElementById('foundBack').onclick=()=>show('v-anywhere');
-  // Show open store button instead of floor plan
   document.getElementById('floorPlan').innerHTML=`<div style="text-align:center;padding:20px">
     <div style="font-size:13px;color:var(--t2);margin-bottom:14px">Open the store to see the full layout</div>
     <button onclick="openStore('${item.store?.id}','${esc(item.store?.name||'')}')" style="background:var(--p);color:#fff;border:none;padding:11px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Open ${esc(item.store?.name||'Store')}</button>
@@ -851,18 +858,39 @@ function _renderFound(name, aisle, locationDetail, aisleList){
   document.getElementById('foundAisle').textContent=aisle.name;
   document.getElementById('foundAisleDesc').textContent=aisle.description||'';
   document.getElementById('foundLoc').textContent=locationDetail||'Check with store staff for exact position';
-  const rows=aisleList.map((a,i)=>{
+
+  if(!aisleList.length){ document.getElementById('floorPlan').innerHTML=''; return; }
+
+  // Bird's eye grid — 2 columns like a real store aisle layout
+  const cols=2;
+  // Pad to even number so grid is complete
+  const padded=[...aisleList];
+  if(padded.length%cols!==0) padded.push(null);
+
+  const tiles=padded.map((a,i)=>{
+    if(!a) return `<div class="ba-empty"></div>`;
     const hit=a.id===aisle.id;
-    return `<div class="floor-aisle${hit?' hit':''}">
-      <div class="floor-num">${i+1}</div>
-      <div class="floor-info"><div class="floor-name">${esc(a.name)}</div>${a.description?`<div class="floor-desc">${esc(a.description)}</div>`:''}</div>
-      ${hit?'<div class="floor-pin">📍</div>':''}
-      <div class="floor-path"></div>
+    return `<div class="ba-tile${hit?' hit':''}">
+      <div class="ba-num">AISLE ${i+1}</div>
+      <div class="ba-name">${esc(a.name)}</div>
+      ${hit?'<div class="ba-pin">📍</div>':''}
     </div>`;
   }).join('');
-  document.getElementById('floorPlan').innerHTML=aisleList.length
-    ?`<div class="floor-gate"><div class="floor-gate-line"></div>🚪 Entrance<div class="floor-gate-line"></div></div>${rows}<div class="floor-gate" style="padding:12px 0 6px"><div class="floor-gate-line"></div>🛒 Checkout<div class="floor-gate-line"></div></div>`
-    :rows;
+
+  document.getElementById('floorPlan').innerHTML=`
+    <div class="birdseye">
+      <div class="birdseye-gate">
+        <div class="birdseye-gate-line"></div>
+        🚪 ENTRANCE
+        <div class="birdseye-gate-line"></div>
+      </div>
+      <div class="birdseye-grid" style="grid-template-columns:repeat(${cols},1fr)">${tiles}</div>
+      <div class="birdseye-gate" style="padding-top:12px">
+        <div class="birdseye-gate-line"></div>
+        🛒 CHECKOUT
+        <div class="birdseye-gate-line"></div>
+      </div>
+    </div>`;
 }
 
 // ── Shopping List ──
