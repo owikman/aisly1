@@ -222,32 +222,35 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .map-section{padding:22px 16px}
 .map-label{font-size:12px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px}
 
-/* BIRD'S EYE FLOOR PLAN */
-.birdseye{background:#dde3ea;border-radius:18px;padding:14px;border:3px solid #94a3b8;position:relative}
-.birdseye-gate{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 0;
-  font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:1px}
-.birdseye-gate-line{flex:1;height:2px;background:#94a3b8;border-radius:1px}
-.birdseye-path{height:10px;display:flex;align-items:center;justify-content:center;margin:4px 0}
-.birdseye-path-label{font-size:9px;color:#94a3b8;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
-.birdseye-grid{display:grid;gap:8px}
-.birdseye-row{display:contents}
-.ba-tile{background:#fff;border:2px solid #cbd5e1;border-radius:10px;padding:10px 6px 8px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;min-height:72px;transition:all .2s;position:relative}
-.ba-tile.hit{background:var(--p);border-color:var(--p);
-  box-shadow:0 0 0 3px rgba(79,70,229,.2),0 6px 20px rgba(79,70,229,.35);
-  animation:ba-glow 1.8s ease-in-out infinite}
-@keyframes ba-glow{
-  0%,100%{box-shadow:0 0 0 3px rgba(79,70,229,.2),0 6px 20px rgba(79,70,229,.35)}
-  50%{box-shadow:0 0 0 6px rgba(79,70,229,.1),0 8px 28px rgba(79,70,229,.5)}
-}
-.ba-num{font-size:10px;font-weight:800;color:#94a3b8;margin-bottom:4px;letter-spacing:.3px}
-.ba-tile.hit .ba-num{color:rgba(255,255,255,.65)}
-.ba-name{font-size:11px;font-weight:700;color:var(--text);line-height:1.25;word-break:break-word}
-.ba-tile.hit .ba-name{color:#fff}
-.ba-pin{font-size:16px;margin-top:5px;animation:pin-bounce .9s ease-in-out infinite}
+/* FLOOR PLAN */
 @keyframes pin-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-.ba-empty{background:transparent;border:2px dashed rgba(148,163,184,.3);border-radius:10px;min-height:72px}
+.fp-wrap{background:#f2efe8;border:3px solid #374151;border-radius:8px;overflow:hidden}
+.fp-zone{background:#374151;padding:8px 14px;display:flex;align-items:center;gap:8px}
+.fp-zone-lbl{color:#d1d5db;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;flex-shrink:0}
+.fp-lanes{display:flex;gap:5px;flex:1;justify-content:center}
+.fp-lane{width:22px;height:14px;background:#4b5563;border:1px solid #6b7280;border-radius:2px}
+.fp-door-wrap{display:flex;align-items:center;gap:12px;flex:1;justify-content:center}
+.fp-door{flex:1;height:2px;background:#6b7280;border-radius:1px}
+.fp-body{padding:10px;display:flex;flex-direction:column;gap:3px}
+.fp-shelf{background:#c4cdd8;border:1.5px solid #8fa0b4;border-radius:4px;padding:9px 12px;
+  display:flex;align-items:center;gap:10px;position:relative;overflow:hidden;transition:all .2s}
+.fp-shelf::before,.fp-shelf::after{content:'';position:absolute;top:0;bottom:0;width:4px;background:rgba(0,0,0,.12)}
+.fp-shelf::before{left:0}.fp-shelf::after{right:0}
+.fp-shelf.hit{background:var(--p);border-color:#3730a3;
+  box-shadow:0 0 0 3px rgba(79,70,229,.2),0 4px 16px rgba(79,70,229,.4);
+  animation:fp-glow 1.8s ease-in-out infinite}
+@keyframes fp-glow{
+  0%,100%{box-shadow:0 0 0 3px rgba(79,70,229,.2),0 4px 16px rgba(79,70,229,.4)}
+  50%{box-shadow:0 0 0 5px rgba(79,70,229,.1),0 6px 24px rgba(79,70,229,.55)}
+}
+.fp-num{font-size:9px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;min-width:46px}
+.fp-shelf.hit .fp-num{color:rgba(255,255,255,.6)}
+.fp-name{flex:1;font-size:12px;font-weight:700;color:#1e293b;line-height:1.2}
+.fp-shelf.hit .fp-name{color:#fff}
+.fp-pin{font-size:13px;animation:pin-bounce .9s ease-in-out infinite;flex-shrink:0}
+.fp-walkway{height:11px;display:flex;align-items:center;gap:6px;padding:0 4px}
+.fp-walkway::before,.fp-walkway::after{content:'';flex:1;border-top:1.5px dashed #b0bec8}
+.fp-walkway span{font-size:8px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
 
 /* ANYWHERE (cross-store) */
 .anywhere-group{margin-bottom:16px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
@@ -869,34 +872,37 @@ function _renderFound(name, aisle, locationDetail, aisleList){
 
   if(!aisleList.length){ document.getElementById('floorPlan').innerHTML=''; return; }
 
-  // Bird's eye grid — 2 columns like a real store aisle layout
-  const cols=2;
-  // Pad to even number so grid is complete
-  const padded=[...aisleList];
-  if(padded.length%cols!==0) padded.push(null);
-
-  const tiles=padded.map((a,i)=>{
-    if(!a) return `<div class="ba-empty"></div>`;
+  // Build shelf rows with walkway gaps between every 2 shelves
+  const rows=[];
+  aisleList.forEach((a,i)=>{
     const hit=a.id===aisle.id;
-    return `<div class="ba-tile${hit?' hit':''}">
-      <div class="ba-num">AISLE ${i+1}</div>
-      <div class="ba-name">${esc(a.name)}</div>
-      ${hit?'<div class="ba-pin">📍</div>':''}
-    </div>`;
-  }).join('');
+    rows.push(`<div class="fp-shelf${hit?' hit':''}">
+      <div class="fp-num">Aisle ${i+1}</div>
+      <div class="fp-name">${esc(a.name)}</div>
+      ${hit?'<div class="fp-pin">📍</div>':''}
+    </div>`);
+    // Add a walkway gap after every 2 shelves
+    if((i+1)%2===0 && i<aisleList.length-1){
+      rows.push(`<div class="fp-walkway"><span>← walk →</span></div>`);
+    }
+  });
+
+  // Checkout lanes
+  const lanes=Array.from({length:6},()=>'<div class="fp-lane"></div>').join('');
 
   document.getElementById('floorPlan').innerHTML=`
-    <div class="birdseye">
-      <div class="birdseye-gate">
-        <div class="birdseye-gate-line"></div>
-        🚪 ENTRANCE
-        <div class="birdseye-gate-line"></div>
+    <div class="fp-wrap">
+      <div class="fp-zone">
+        <span class="fp-zone-lbl">🛒 Checkout</span>
+        <div class="fp-lanes">${lanes}</div>
       </div>
-      <div class="birdseye-grid" style="grid-template-columns:repeat(${cols},1fr)">${tiles}</div>
-      <div class="birdseye-gate" style="padding-top:12px">
-        <div class="birdseye-gate-line"></div>
-        🛒 CHECKOUT
-        <div class="birdseye-gate-line"></div>
+      <div class="fp-body">${rows.join('')}</div>
+      <div class="fp-zone">
+        <div class="fp-door-wrap">
+          <div class="fp-door"></div>
+          <span class="fp-zone-lbl">🚪 Entrance</span>
+          <div class="fp-door"></div>
+        </div>
       </div>
     </div>`;
 }
