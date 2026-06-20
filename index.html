@@ -36,15 +36,22 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .nav-link{margin-left:auto;font-size:13px;font-weight:600;color:var(--p);text-decoration:none;white-space:nowrap}
 
 /* HERO */
-.hero{background:var(--grad);padding:36px 24px 28px;color:#fff;text-align:center}
+.hero{background:var(--grad);padding:40px 24px 32px;color:#fff;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;width:280px;height:280px;border-radius:50%;
+  background:rgba(255,255,255,.07);top:-100px;right:-80px;pointer-events:none}
+.hero::after{content:'';position:absolute;width:180px;height:180px;border-radius:50%;
+  background:rgba(255,255,255,.05);bottom:-60px;left:-50px;pointer-events:none}
+.hero-inner{position:relative;z-index:1}
 .hero-badge{display:inline-block;background:rgba(255,255,255,.2);color:#fff;font-size:11px;
-  font-weight:700;padding:4px 12px;border-radius:100px;letter-spacing:.8px;text-transform:uppercase;margin-bottom:16px}
-.hero h1{font-size:32px;font-weight:800;line-height:1.15;letter-spacing:-1px;margin-bottom:8px}
-.hero p{font-size:15px;opacity:.85;line-height:1.5;margin-bottom:20px}
-.hero-search{display:flex;background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh-lg);margin-bottom:14px}
-.hero-search input{flex:1;border:none;outline:none;padding:14px 16px;font-size:15px;font-family:inherit;color:var(--text)}
+  font-weight:700;padding:5px 14px;border-radius:100px;letter-spacing:.8px;text-transform:uppercase;margin-bottom:18px;
+  border:1px solid rgba(255,255,255,.25)}
+.hero h1{font-size:36px;font-weight:800;line-height:1.1;letter-spacing:-1.5px;margin-bottom:10px}
+.hero h1 span{opacity:.8}
+.hero p{font-size:15px;opacity:.8;line-height:1.55;margin-bottom:24px}
+.hero-search{display:flex;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.2);margin-bottom:14px}
+.hero-search input{flex:1;border:none;outline:none;padding:15px 16px;font-size:15px;font-family:inherit;color:var(--text)}
 .hero-search input::placeholder{color:var(--t3)}
-.hero-search button{background:var(--p);color:#fff;border:none;padding:0 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.hero-search button{background:var(--p);color:#fff;border:none;padding:0 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;letter-spacing:-.2px}
 .hero-search button:hover{background:var(--p700)}
 
 /* MODE TOGGLE + NEAR ME */
@@ -61,7 +68,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .section{padding:22px 16px}
 .sec-title{font-size:12px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px}
 
-/* STORE CARDS */
+/* STORE CARDS (search results) */
 .store-list{display:flex;flex-direction:column;gap:10px}
 .store-card{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--white);
   border:1.5px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s}
@@ -72,6 +79,64 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .store-name{font-size:15px;font-weight:600}
 .store-meta{font-size:13px;color:var(--t2);margin-top:2px}
 .store-chevron{color:var(--t3);font-size:20px}
+
+/* STATS STRIP */
+.stats-strip{display:flex;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stat-item{flex:1;text-align:center;padding:18px 8px;border-right:1px solid var(--border)}
+.stat-item:last-child{border-right:none}
+.stat-num{font-size:22px;font-weight:800;color:var(--p);letter-spacing:-1px;line-height:1}
+.stat-lbl{font-size:11px;color:var(--t2);margin-top:3px;font-weight:500}
+
+/* HOW IT WORKS */
+.hiw{padding:24px 20px;background:var(--bg);border-bottom:1px solid var(--border)}
+.hiw-title{font-size:12px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:18px}
+.hiw-steps{display:flex;align-items:flex-start;gap:0}
+.hiw-step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative}
+.hiw-step:not(:last-child)::after{content:'›';position:absolute;right:-4px;top:14px;color:var(--t3);font-size:18px;font-weight:300}
+.hiw-icon{width:44px;height:44px;border-radius:14px;background:var(--p50);
+  display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:8px}
+.hiw-num{font-size:10px;font-weight:800;color:var(--p);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.hiw-text{font-size:12px;font-weight:600;color:var(--text);line-height:1.35;padding:0 4px}
+
+/* DEMO STORE CARDS */
+.demo-stores{display:flex;flex-direction:column;gap:12px;padding:0 16px}
+.demo-card{display:flex;align-items:center;gap:14px;padding:16px;border-radius:16px;
+  cursor:pointer;transition:all .2s;border:1.5px solid transparent;background:var(--white)}
+.demo-card-g{background:linear-gradient(to right,rgba(16,185,129,.06),rgba(16,185,129,.02));border-color:rgba(16,185,129,.25)}
+.demo-card-b{background:linear-gradient(to right,rgba(59,130,246,.06),rgba(59,130,246,.02));border-color:rgba(59,130,246,.25)}
+.demo-card-v{background:linear-gradient(to right,rgba(139,92,246,.06),rgba(139,92,246,.02));border-color:rgba(139,92,246,.25)}
+.demo-card-g:hover{border-color:#10b981;box-shadow:0 4px 16px rgba(16,185,129,.15)}
+.demo-card-b:hover{border-color:#3b82f6;box-shadow:0 4px 16px rgba(59,130,246,.15)}
+.demo-card-v:hover{border-color:#8b5cf6;box-shadow:0 4px 16px rgba(139,92,246,.15)}
+.demo-emoji{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;
+  justify-content:center;font-size:26px;flex-shrink:0}
+.demo-emoji-g{background:rgba(16,185,129,.12)}
+.demo-emoji-b{background:rgba(59,130,246,.12)}
+.demo-emoji-v{background:rgba(139,92,246,.12)}
+.demo-info{flex:1;min-width:0}
+.demo-tag{display:inline-block;padding:2px 8px;border-radius:100px;font-size:10px;
+  font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.demo-tag-g{background:rgba(16,185,129,.12);color:#059669}
+.demo-tag-b{background:rgba(59,130,246,.12);color:#2563eb}
+.demo-tag-v{background:rgba(139,92,246,.12);color:#7c3aed}
+.demo-name{font-size:15px;font-weight:700;color:var(--text)}
+.demo-meta{font-size:12px;color:var(--t2);margin-top:2px}
+.demo-arrow{font-size:20px;color:var(--t3);flex-shrink:0}
+
+/* STORE OWNER CTA */
+.cta-card{margin:24px 16px 0;background:var(--text);border-radius:20px;padding:24px;
+  color:#fff;position:relative;overflow:hidden}
+.cta-card::before{content:'';position:absolute;width:180px;height:180px;border-radius:50%;
+  background:rgba(79,70,229,.35);top:-50px;right:-50px;pointer-events:none}
+.cta-card::after{content:'';position:absolute;width:100px;height:100px;border-radius:50%;
+  background:rgba(6,182,212,.2);bottom:-30px;left:-20px;pointer-events:none}
+.cta-eyebrow{font-size:11px;font-weight:700;opacity:.5;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.cta-title{font-size:22px;font-weight:800;letter-spacing:-.5px;line-height:1.2;margin-bottom:8px;position:relative}
+.cta-sub{font-size:14px;opacity:.65;line-height:1.5;margin-bottom:20px;position:relative}
+.cta-btn{display:inline-block;background:#fff;color:var(--text);padding:11px 22px;
+  border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;
+  transition:opacity .15s;position:relative}
+.cta-btn:hover{opacity:.9}
 
 /* STORE HEADER */
 .store-hdr{padding:20px 16px 4px}
@@ -236,56 +301,115 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   <div id="v-home">
     <nav class="nav">
       <div class="nav-logo">aisly</div>
-      <a href="admin.html" class="nav-link">Store owners →</a>
+      <a href="admin.html" class="nav-link">For stores →</a>
     </nav>
+
+    <!-- Hero -->
     <div class="hero">
-      <div class="hero-badge">Free for everyone</div>
-      <h1>Find anything<br>in any store.</h1>
-      <p>Search your store, find your item,<br>know your aisle in seconds.</p>
-      <div class="hero-search">
-        <input id="storeQ" type="text" placeholder="Search for a store…" autocomplete="off" autocorrect="off">
-        <button id="searchBtn" onclick="handleSearch()">Search</button>
-      </div>
-      <div class="hero-extras">
-        <div class="mode-toggle">
-          <button class="mode-btn active" id="m-stores" onclick="setMode('stores')">🏪 Stores</button>
-          <button class="mode-btn" id="m-items" onclick="setMode('items')">🔍 Find Item</button>
+      <div class="hero-inner">
+        <div class="hero-badge">Free for everyone</div>
+        <h1>Stop wandering.<br><span>Find it instantly.</span></h1>
+        <p>Search any store, find any item,<br>know the exact aisle in seconds.</p>
+        <div class="hero-search">
+          <input id="storeQ" type="text" placeholder="Search for a store or item…" autocomplete="off" autocorrect="off">
+          <button id="searchBtn" onclick="handleSearch()">Search</button>
         </div>
-        <button class="near-btn" onclick="nearMe()">📍 Near Me</button>
+        <div class="hero-extras">
+          <div class="mode-toggle">
+            <button class="mode-btn active" id="m-stores" onclick="setMode('stores')">🏪 Stores</button>
+            <button class="mode-btn" id="m-items" onclick="setMode('items')">🔍 Find Item</button>
+          </div>
+          <button class="near-btn" onclick="nearMe()">📍 Near Me</button>
+        </div>
       </div>
     </div>
-    <div class="section">
-      <div class="sec-title">Example Stores</div>
-      <div class="store-list">
-        <div class="store-card" onclick="openStoreByName('Sunrise Supermarket')">
-          <div class="store-icon">🛒</div>
-          <div class="store-info">
-            <div class="store-name">Sunrise Supermarket</div>
-            <div class="store-meta">London, UK · 11 aisles · 70+ items</div>
-          </div>
-          <div class="store-chevron">›</div>
+
+    <!-- Stats -->
+    <div class="stats-strip">
+      <div class="stat-item">
+        <div class="stat-num">3</div>
+        <div class="stat-lbl">Demo stores</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">150+</div>
+        <div class="stat-lbl">Items mapped</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">Free</div>
+        <div class="stat-lbl">Forever</div>
+      </div>
+    </div>
+
+    <!-- How it works -->
+    <div class="hiw">
+      <div class="hiw-title">How it works</div>
+      <div class="hiw-steps">
+        <div class="hiw-step">
+          <div class="hiw-icon">🏪</div>
+          <div class="hiw-num">Step 1</div>
+          <div class="hiw-text">Search your store</div>
         </div>
-        <div class="store-card" onclick="openStoreByName('TechZone Electronics')">
-          <div class="store-icon">💻</div>
-          <div class="store-info">
-            <div class="store-name">TechZone Electronics</div>
-            <div class="store-meta">Manchester, UK · 8 aisles · 40+ items</div>
-          </div>
-          <div class="store-chevron">›</div>
+        <div class="hiw-step">
+          <div class="hiw-icon">🔍</div>
+          <div class="hiw-num">Step 2</div>
+          <div class="hiw-text">Find your item</div>
         </div>
-        <div class="store-card" onclick="openStoreByName('City Pharmacy')">
-          <div class="store-icon">💊</div>
-          <div class="store-info">
-            <div class="store-name">City Pharmacy</div>
-            <div class="store-meta">Birmingham, UK · 7 aisles · 40+ items</div>
-          </div>
-          <div class="store-chevron">›</div>
+        <div class="hiw-step">
+          <div class="hiw-icon">📍</div>
+          <div class="hiw-num">Step 3</div>
+          <div class="hiw-text">Go to the aisle</div>
         </div>
       </div>
-      <div style="height:20px"></div>
-      <div class="sec-title">Recently Added</div>
+    </div>
+
+    <!-- Example stores -->
+    <div class="section" style="padding-bottom:4px">
+      <div class="sec-title">Example Stores</div>
+    </div>
+    <div class="demo-stores">
+      <div class="demo-card demo-card-g" onclick="openStoreByName('Sunrise Supermarket')">
+        <div class="demo-emoji demo-emoji-g">🛒</div>
+        <div class="demo-info">
+          <div class="demo-tag demo-tag-g">Supermarket</div>
+          <div class="demo-name">Sunrise Supermarket</div>
+          <div class="demo-meta">London, UK &nbsp;·&nbsp; 11 aisles &nbsp;·&nbsp; 70+ items</div>
+        </div>
+        <div class="demo-arrow">›</div>
+      </div>
+      <div class="demo-card demo-card-b" onclick="openStoreByName('TechZone Electronics')">
+        <div class="demo-emoji demo-emoji-b">💻</div>
+        <div class="demo-info">
+          <div class="demo-tag demo-tag-b">Electronics</div>
+          <div class="demo-name">TechZone Electronics</div>
+          <div class="demo-meta">Manchester, UK &nbsp;·&nbsp; 8 aisles &nbsp;·&nbsp; 40+ items</div>
+        </div>
+        <div class="demo-arrow">›</div>
+      </div>
+      <div class="demo-card demo-card-v" onclick="openStoreByName('City Pharmacy')">
+        <div class="demo-emoji demo-emoji-v">💊</div>
+        <div class="demo-info">
+          <div class="demo-tag demo-tag-v">Pharmacy</div>
+          <div class="demo-name">City Pharmacy</div>
+          <div class="demo-meta">Birmingham, UK &nbsp;·&nbsp; 7 aisles &nbsp;·&nbsp; 40+ items</div>
+        </div>
+        <div class="demo-arrow">›</div>
+      </div>
+    </div>
+
+    <!-- Store owner CTA -->
+    <div class="cta-card">
+      <div class="cta-eyebrow">For store owners</div>
+      <div class="cta-title">Tired of customers asking where things are?</div>
+      <div class="cta-sub">Add your store to Aisly for free. Set up your aisles, map your products, and let customers find everything themselves.</div>
+      <a href="admin.html" class="cta-btn">Add my store — it's free →</a>
+    </div>
+
+    <!-- Recently added -->
+    <div class="section" style="padding-top:28px">
+      <div class="sec-title">Recently Added Stores</div>
       <div class="store-list" id="recentList"><div class="loading"><div class="spin"></div>Loading…</div></div>
     </div>
+    <div style="height:32px"></div>
   </div>
 
   <!-- RESULTS -->
