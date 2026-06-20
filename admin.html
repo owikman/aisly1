@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#4f46e5">
+<title>Aisly — Store Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --p:#4f46e5;--p50:#eef2ff;--p100:#e0e7ff;--p700:#4338ca;
+  --grad:linear-gradient(135deg,#4f46e5 0%,#06b6d4 100%);
+  --bg:#f8fafc;--white:#fff;--text:#0f172a;--t2:#64748b;--t3:#94a3b8;
+  --border:#e2e8f0;--danger:#ef4444;--danger-bg:#fef2f2;--success:#10b981;
+  --sh:0 1px 3px rgba(0,0,0,.08);--sh-md:0 4px 12px rgba(0,0,0,.08);--sh-lg:0 8px 24px rgba(0,0,0,.12);
+  --r:12px
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100svh;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+
+/* ── AUTH ── */
+.auth-wrap{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--grad)}
+.auth-card{background:var(--white);border-radius:20px;padding:36px 32px;width:100%;max-width:400px;box-shadow:var(--sh-lg)}
+.auth-logo{font-size:26px;font-weight:800;color:var(--p);letter-spacing:-.5px;text-align:center;margin-bottom:4px}
+.auth-sub{text-align:center;font-size:14px;color:var(--t2);margin-bottom:28px}
+.auth-tabs{display:flex;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:24px}
+.auth-tab{flex:1;padding:8px;border:none;border-radius:8px;background:transparent;font-size:14px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit;transition:all .15s}
+.auth-tab.active{background:var(--white);color:var(--p);box-shadow:var(--sh)}
+
+/* ── FORM ── */
+.field{margin-bottom:16px}
+.label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
+.input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--text);outline:none;transition:border-color .2s;background:var(--white)}
+.input:focus{border-color:var(--p)}
+.input-sm{padding:9px 12px;font-size:13px}
+textarea.input{resize:vertical;min-height:80px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border:none;border-radius:var(--r);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+.btn-primary{background:var(--p);color:#fff;width:100%}
+.btn-primary:hover{background:var(--p700)}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed}
+.btn-ghost{background:var(--bg);color:var(--t2);border:1.5px solid var(--border)}
+.btn-ghost:hover{border-color:var(--p);color:var(--p)}
+.btn-danger{background:var(--danger-bg);color:var(--danger);border:1.5px solid rgba(239,68,68,.2)}
+.btn-danger:hover{background:var(--danger);color:#fff}
+.btn-sm{padding:7px 14px;font-size:13px;border-radius:8px}
+.divider{text-align:center;font-size:12px;color:var(--t3);margin:16px 0;position:relative}
+.divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border)}
+.divider span{background:var(--white);padding:0 10px;position:relative}
+
+/* ── DASHBOARD ── */
+.dash-nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.dash-logo{font-size:20px;font-weight:800;color:var(--p);letter-spacing:-.5px}
+.dash-store-name{font-size:14px;font-weight:600;color:var(--t2)}
+.btn-logout{padding:7px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit}
+.btn-logout:hover{color:var(--danger);border-color:var(--danger)}
+
+.tab-bar{background:var(--white);border-bottom:1px solid var(--border);display:flex;padding:0 20px;position:sticky;top:56px;z-index:99}
+.tab-btn{padding:14px 18px;border:none;background:transparent;font-size:14px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.tab-btn.active{color:var(--p);border-bottom-color:var(--p)}
+.tab-btn:hover:not(.active){color:var(--text)}
+
+.tab-content{display:none;padding:24px 20px;max-width:680px;margin:0 auto}
+.tab-content.active{display:block}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1.5px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px}
+.card-title{font-size:16px;font-weight:700;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+
+/* ── LIST ITEMS ── */
+.list-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--white);
+  border:1.5px solid var(--border);border-radius:var(--r);margin-bottom:10px;transition:border-color .15s}
+.list-item:hover{border-color:var(--p100)}
+.list-icon{width:40px;height:40px;border-radius:10px;background:var(--p50);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.list-info{flex:1;min-width:0}
+.list-name{font-size:15px;font-weight:600}
+.list-sub{font-size:13px;color:var(--t2);margin-top:2px}
+.list-actions{display:flex;gap:8px;flex-shrink:0}
+.badge{display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700}
+.badge-blue{background:var(--p50);color:var(--p)}
+.badge-gray{background:var(--bg);color:var(--t2);border:1px solid var(--border)}
+
+/* ── SECTION HEADER ── */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sec-hdr-title{font-size:16px;font-weight:700}
+.sec-hdr-sub{font-size:13px;color:var(--t2);margin-top:2px}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+@media(min-width:500px){.modal-overlay{align-items:center}}
+.modal{background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:24px;max-height:90svh;overflow-y:auto}
+@media(min-width:500px){.modal{border-radius:20px}}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+.modal-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:var(--t2)}
+.modal-close:hover{background:var(--border)}
+.modal-actions{display:flex;gap:10px;margin-top:20px}
+.modal-actions .btn{flex:1}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:44px 20px}
+.empty-icon{font-size:42px;margin-bottom:12px}
+.empty-title{font-size:16px;font-weight:700;margin-bottom:6px}
+.empty-sub{font-size:14px;color:var(--t2);line-height:1.5;margin-bottom:20px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:28px;left:50%;z-index:9999;transform:translateX(-50%) translateY(10px);
+  background:var(--text);color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:500;
+  opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{background:var(--success)}
+.toast.err{background:var(--danger)}
+
+/* ── SPIN ── */
+.spin{width:18px;height:18px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── MOBILE ── */
+@media(max-width:520px){
+  /* Prevent iOS auto-zoom on input focus */
+  input,select,textarea{font-size:16px!important}
+  .auth-card{padding:28px 20px;border-radius:16px}
+  .dash-nav{padding:0 14px;height:52px}
+  .tab-bar{padding:0 4px;position:sticky;top:52px}
+  .tab-btn{padding:13px 12px;font-size:13px;flex:1;text-align:center}
+  .tab-content{padding:18px 14px}
+  .card{padding:16px}
+  /* Stack city/country on small screens */
+  .field-row{grid-template-columns:1fr!important}
+  /* List items: wrap actions to new row on very small screens */
+  .list-item{flex-wrap:wrap;padding:12px 14px;gap:10px}
+  .list-info{min-width:0;flex:1}
+  .list-actions{width:100%;display:flex;gap:8px;justify-content:flex-end}
+  .list-actions .btn{flex:1;max-width:100px;justify-content:center}
+  .btn{min-height:44px}
+  .btn-sm{min-height:38px;padding:8px 14px}
+  .modal{padding:20px 16px;border-radius:20px 20px 0 0}
+  /* Safe area bottom for modal and tab content */
+  .modal{padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}
+  .tab-content:last-child{padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+  .sec-hdr{flex-wrap:wrap;gap:10px}
+  .sec-hdr .btn{width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="v-auth" class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">aisly</div>
+    <div class="auth-sub">Store Owner Portal</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="authTab('login',this)">Log in</button>
+      <button class="auth-tab" onclick="authTab('register',this)">Register</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="form-login">
+      <div class="field"><label class="label">Email</label><input id="l-email" type="email" class="input" placeholder="you@store.com"></div>
+      <div class="field"><label class="label">Password</label><input id="l-pass" type="password" class="input" placeholder="••••••••"></div>
+      <button class="btn btn-primary" id="loginBtn" onclick="doLogin()">Log in</button>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="form-register" hidden>
+      <div class="field"><label class="label">Store Name</label><input id="r-store" type="text" class="input" placeholder="e.g. Sunrise Supermarket"></div>
+      <div class="field-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="field"><label class="label">City</label><input id="r-city" type="text" class="input" placeholder="London"></div>
+        <div class="field"><label class="label">Country</label><input id="r-country" type="text" class="input" placeholder="UK"></div>
+      </div>
+      <div class="divider"><span>Account details</span></div>
+      <div class="field"><label class="label">Email</label><input id="r-email" type="email" class="input" placeholder="you@store.com"></div>
+      <div class="field"><label class="label">Password</label><input id="r-pass" type="password" class="input" placeholder="Min. 6 characters"></div>
+      <button class="btn btn-primary" id="registerBtn" onclick="doRegister()">Create store &amp; account</button>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="v-dash" hidden>
+  <nav class="dash-nav">
+    <div>
+      <div class="dash-logo">aisly</div>
+      <div class="dash-store-name" id="dashStoreName"></div>
+    </div>
+    <button class="btn-logout" onclick="doLogout()">Log out</button>
+  </nav>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('store',this)">🏪 Store</button>
+    <button class="tab-btn" onclick="switchTab('aisles',this)">🏃 Aisles</button>
+    <button class="tab-btn" onclick="switchTab('items',this)">📦 Items</button>
+  </div>
+
+  <!-- STORE TAB -->
+  <div class="tab-content active" id="tab-store">
+    <div class="card">
+      <div class="card-title">Store Details</div>
+      <div class="field"><label class="label">Store Name</label><input id="s-name" type="text" class="input" placeholder="Store name"></div>
+      <div class="field-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="field"><label class="label">City</label><input id="s-city" type="text" class="input" placeholder="London"></div>
+        <div class="field"><label class="label">Country</label><input id="s-country" type="text" class="input" placeholder="UK"></div>
+      </div>
+      <div class="field"><label class="label">Address</label><input id="s-address" type="text" class="input" placeholder="123 High Street"></div>
+      <div class="field"><label class="label">Description <span style="color:var(--t3);font-weight:400">(optional)</span></label><textarea id="s-desc" class="input" placeholder="Tell customers about your store…"></textarea></div>
+      <button class="btn btn-primary" id="saveStoreBtn" onclick="saveStore()">Save changes</button>
+    </div>
+    <div class="card" style="background:var(--p50);border-color:var(--p100)">
+      <div style="font-weight:700;margin-bottom:8px;color:var(--p)">🔗 Customer Link</div>
+      <div style="font-size:13px;color:var(--t2);margin-bottom:12px">Share this link so customers can find your store on Aisly</div>
+      <div style="background:var(--white);border:1.5px solid var(--p100);border-radius:10px;padding:10px 14px;font-size:13px;font-family:monospace;color:var(--p);word-break:break-all" id="storeLink"></div>
+    </div>
+  </div>
+
+  <!-- AISLES TAB -->
+  <div class="tab-content" id="tab-aisles">
+    <div class="sec-hdr">
+      <div><div class="sec-hdr-title">Aisles</div><div class="sec-hdr-sub">Add sections or aisles customers can browse</div></div>
+      <button class="btn btn-primary btn-sm" onclick="openModal('aisle')">+ Add Aisle</button>
+    </div>
+    <div id="aisleList"></div>
+  </div>
+
+  <!-- ITEMS TAB -->
+  <div class="tab-content" id="tab-items">
+    <div class="sec-hdr">
+      <div><div class="sec-hdr-title">Items</div><div class="sec-hdr-sub">Add products so customers can find them</div></div>
+      <button class="btn btn-primary btn-sm" onclick="openModal('item')">+ Add Item</button>
+    </div>
+    <div style="margin-bottom:16px">
+      <select id="aisleFilter" class="input input-sm" onchange="loadItems()" style="max-width:200px">
+        <option value="">All aisles</option>
+      </select>
+    </div>
+    <div id="itemList"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" hidden onclick="closeModalOutside(event)">
+  <div class="modal" id="modalBox">
+    <div class="modal-title"><span id="modalTitle">Add</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+const SURL='https://ulvdtjsrdqnffvseqkmp.supabase.co';
+const SKEY='sb_publishable_Ll9YN_7aObyWFwO2n2qKjw_yVf2piHi';
+const sb=supabase.createClient(SURL,SKEY);
+
+let myStore=null, myAisles=[], editingId=null, modalType=null;
+
+// ── AUTH ──
+function authTab(tab,el){
+  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('form-login').hidden=tab!=='login';
+  document.getElementById('form-register').hidden=tab!=='register';
+}
+
+async function doLogin(){
+  const btn=document.getElementById('loginBtn');
+  btn.disabled=true;btn.innerHTML='<div class="spin"></div>';
+  const {error}=await sb.auth.signInWithPassword({email:document.getElementById('l-email').value,password:document.getElementById('l-pass').value});
+  btn.disabled=false;btn.textContent='Log in';
+  if(error){toast(error.message,'err');return}
+  await loadDash();
+}
+
+async function doRegister(){
+  const storeName=document.getElementById('r-store').value.trim();
+  if(!storeName){toast('Store name is required','err');return}
+  const btn=document.getElementById('registerBtn');
+  btn.disabled=true;btn.innerHTML='<div class="spin"></div>';
+  const {data,error}=await sb.auth.signUp({email:document.getElementById('r-email').value,password:document.getElementById('r-pass').value});
+  if(error){btn.disabled=false;btn.textContent='Create store & account';toast(error.message,'err');return}
+  // Create store
+  const {error:se}=await sb.from('stores').insert({name:storeName,city:document.getElementById('r-city').value.trim()||null,country:document.getElementById('r-country').value.trim()||null,owner_id:data.user.id});
+  btn.disabled=false;btn.textContent='Create store & account';
+  if(se){toast(se.message,'err');return}
+  await loadDash();
+}
+
+async function doLogout(){
+  await sb.auth.signOut();
+  document.getElementById('v-dash').hidden=true;
+  document.getElementById('v-auth').hidden=false;
+}
+
+// ── DASHBOARD ──
+async function loadDash(){
+  const {data:{user}}=await sb.auth.getUser();
+  if(!user){document.getElementById('v-auth').hidden=false;document.getElementById('v-dash').hidden=true;return}
+  document.getElementById('v-auth').hidden=true;
+  document.getElementById('v-dash').hidden=false;
+  // Load store
+  const {data}=await sb.from('stores').select('*').eq('owner_id',user.id).single();
+  myStore=data;
+  if(myStore){
+    document.getElementById('dashStoreName').textContent=myStore.name;
+    document.getElementById('s-name').value=myStore.name||'';
+    document.getElementById('s-city').value=myStore.city||'';
+    document.getElementById('s-country').value=myStore.country||'';
+    document.getElementById('s-address').value=myStore.address||'';
+    document.getElementById('s-desc').value=myStore.description||'';
+    document.getElementById('storeLink').textContent=`${location.origin.replace('admin.html','')}index.html`;
+  }
+  await loadAisles();
+}
+
+// ── TABS ──
+function switchTab(name,el){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='items')loadItems();
+}
+
+// ── STORE ──
+async function saveStore(){
+  if(!myStore){toast('No store found','err');return}
+  const btn=document.getElementById('saveStoreBtn');
+  btn.disabled=true;btn.innerHTML='<div class="spin"></div>';
+  const {error}=await sb.from('stores').update({
+    name:document.getElementById('s-name').value.trim(),
+    city:document.getElementById('s-city').value.trim()||null,
+    country:document.getElementById('s-country').value.trim()||null,
+    address:document.getElementById('s-address').value.trim()||null,
+    description:document.getElementById('s-desc').value.trim()||null,
+  }).eq('id',myStore.id);
+  btn.disabled=false;btn.textContent='Save changes';
+  if(error){toast(error.message,'err');return}
+  document.getElementById('dashStoreName').textContent=document.getElementById('s-name').value.trim();
+  myStore.name=document.getElementById('s-name').value.trim();
+  toast('Store saved!','ok');
+}
+
+// ── AISLES ──
+async function loadAisles(){
+  if(!myStore){renderEmpty('aisleList','🏃','No aisles yet','Add your first aisle to get started');return}
+  const {data}=await sb.from('aisles').select('*').eq('store_id',myStore.id).order('position').order('name');
+  myAisles=data||[];
+  renderAisles();
+  // Populate aisle filter dropdown
+  const sel=document.getElementById('aisleFilter');
+  sel.innerHTML='<option value="">All aisles</option>'+myAisles.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join('');
+}
+
+function renderAisles(){
+  const el=document.getElementById('aisleList');
+  if(!myAisles.length){el.innerHTML='<div class="empty"><div class="empty-icon">🏃</div><div class="empty-title">No aisles yet</div><div class="empty-sub">Add aisles or sections so customers can browse what\'s available</div><button class="btn btn-primary btn-sm" onclick="openModal(\'aisle\')" style="display:inline-flex;width:auto">+ Add Aisle</button></div>';return}
+  el.innerHTML=myAisles.map(a=>`<div class="list-item">
+    <div class="list-icon">🏃</div>
+    <div class="list-info"><div class="list-name">${esc(a.name)}</div><div class="list-sub">${esc(a.description||'No description')}</div></div>
+    <div class="list-actions">
+      <button class="btn btn-ghost btn-sm" onclick="openModal('aisle','${a.id}')">Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteAisle('${a.id}')">Delete</button>
+    </div>
+  </div>`).join('');
+}
+
+async function saveAisle(){
+  const name=document.getElementById('m-aisle-name').value.trim();
+  if(!name){toast('Name is required','err');return}
+  const desc=document.getElementById('m-aisle-desc').value.trim();
+  const pos=parseInt(document.getElementById('m-aisle-pos').value)||0;
+  const btn=document.getElementById('modalSaveBtn');
+  btn.disabled=true;btn.innerHTML='<div class="spin"></div>';
+  let error;
+  if(editingId){
+    ({error}=await sb.from('aisles').update({name,description:desc||null,position:pos}).eq('id',editingId));
+  } else {
+    ({error}=await sb.from('aisles').insert({store_id:myStore.id,name,description:desc||null,position:pos}));
+  }
+  btn.disabled=false;btn.textContent='Save';
+  if(error){toast(error.message,'err');return}
+  closeModal();toast(editingId?'Aisle updated':'Aisle added','ok');
+  await loadAisles();
+}
+
+async function deleteAisle(id){
+  if(!confirm('Delete this aisle and all its items?'))return;
+  const {error}=await sb.from('aisles').delete().eq('id',id);
+  if(error){toast(error.message,'err');return}
+  toast('Aisle deleted','ok');await loadAisles();
+}
+
+// ── ITEMS ──
+async function loadItems(){
+  if(!myStore){renderEmpty('itemList','📦','No items yet','Add aisles first, then add items');return}
+  const aisleId=document.getElementById('aisleFilter').value;
+  let q=sb.from('items').select('*,aisle:aisles(name)').eq('store_id',myStore.id).order('name');
+  if(aisleId)q=q.eq('aisle_id',aisleId);
+  const {data}=await q;
+  const items=data||[];
+  const el=document.getElementById('itemList');
+  if(!items.length){el.innerHTML='<div class="empty"><div class="empty-icon">📦</div><div class="empty-title">No items yet</div><div class="empty-sub">Add items so customers can search for them</div><button class="btn btn-primary btn-sm" onclick="openModal(\'item\')" style="display:inline-flex;width:auto">+ Add Item</button></div>';return}
+  el.innerHTML=items.map(i=>`<div class="list-item">
+    <div class="list-icon">📦</div>
+    <div class="list-info">
+      <div class="list-name">${esc(i.name)}</div>
+      <div class="list-sub">${esc(i.aisle?.name||'Unknown aisle')}${i.location_detail?' · '+esc(i.location_detail):''}</div>
+    </div>
+    <div class="list-actions">
+      ${i.category?`<span class="badge badge-blue">${esc(i.category)}</span>`:''}
+      <button class="btn btn-ghost btn-sm" onclick="openModal('item','${i.id}')">Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteItem('${i.id}')">Del</button>
+    </div>
+  </div>`).join('');
+}
+
+async function saveItem(){
+  const name=document.getElementById('m-item-name').value.trim();
+  const aisleId=document.getElementById('m-item-aisle').value;
+  if(!name){toast('Item name is required','err');return}
+  if(!aisleId){toast('Please select an aisle','err');return}
+  const cat=document.getElementById('m-item-cat').value.trim();
+  const loc=document.getElementById('m-item-loc').value.trim();
+  const desc=document.getElementById('m-item-desc').value.trim();
+  const btn=document.getElementById('modalSaveBtn');
+  btn.disabled=true;btn.innerHTML='<div class="spin"></div>';
+  let error;
+  if(editingId){
+    ({error}=await sb.from('items').update({name,aisle_id:aisleId,store_id:myStore.id,category:cat||null,location_detail:loc||null,description:desc||null}).eq('id',editingId));
+  } else {
+    ({error}=await sb.from('items').insert({name,aisle_id:aisleId,store_id:myStore.id,category:cat||null,location_detail:loc||null,description:desc||null}));
+  }
+  btn.disabled=false;btn.textContent='Save';
+  if(error){toast(error.message,'err');return}
+  closeModal();toast(editingId?'Item updated':'Item added','ok');
+  await loadItems();
+}
+
+async function deleteItem(id){
+  if(!confirm('Delete this item?'))return;
+  const {error}=await sb.from('items').delete().eq('id',id);
+  if(error){toast(error.message,'err');return}
+  toast('Item deleted','ok');await loadItems();
+}
+
+// ── MODAL ──
+async function openModal(type,id=null){
+  modalType=type;editingId=id;
+  document.getElementById('modalOverlay').hidden=false;
+
+  if(type==='aisle'){
+    document.getElementById('modalTitle').textContent=id?'Edit Aisle':'Add Aisle';
+    let aisle={name:'',description:'',position:0};
+    if(id)aisle=myAisles.find(a=>a.id===id)||aisle;
+    document.getElementById('modalBody').innerHTML=`
+      <div class="field"><label class="label">Aisle / Section Name *</label><input id="m-aisle-name" type="text" class="input" placeholder="e.g. Produce, Aisle 4, Dairy" value="${esc(aisle.name)}"></div>
+      <div class="field"><label class="label">Description</label><input id="m-aisle-desc" type="text" class="input" placeholder="e.g. Fresh fruit and vegetables" value="${esc(aisle.description||'')}"></div>
+      <div class="field"><label class="label">Position (for ordering)</label><input id="m-aisle-pos" type="number" class="input" placeholder="1" value="${aisle.position||0}" min="0"></div>
+      <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" id="modalSaveBtn" onclick="saveAisle()">Save</button></div>`;
+  }
+
+  if(type==='item'){
+    document.getElementById('modalTitle').textContent=id?'Edit Item':'Add Item';
+    const aisleOptions=myAisles.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join('');
+    let item={name:'',category:'',location_detail:'',description:'',aisle_id:''};
+    if(id){const {data}=await sb.from('items').select('*').eq('id',id).single();if(data)item=data;}
+    document.getElementById('modalBody').innerHTML=`
+      <div class="field"><label class="label">Item Name *</label><input id="m-item-name" type="text" class="input" placeholder="e.g. Pasta Sauce, Milk, Paracetamol" value="${esc(item.name)}"></div>
+      <div class="field"><label class="label">Aisle *</label><select id="m-item-aisle" class="input">${aisleOptions}</select></div>
+      <div class="field"><label class="label">Location Detail</label><input id="m-item-loc" type="text" class="input" placeholder="e.g. Top shelf, left side" value="${esc(item.location_detail||'')}"></div>
+      <div class="field"><label class="label">Category</label><input id="m-item-cat" type="text" class="input" placeholder="e.g. Condiments, Dairy, Snacks" value="${esc(item.category||'')}"></div>
+      <div class="field"><label class="label">Description</label><input id="m-item-desc" type="text" class="input" placeholder="Optional extra info" value="${esc(item.description||'')}"></div>
+      <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" id="modalSaveBtn" onclick="saveItem()">Save</button></div>`;
+    if(item.aisle_id)document.getElementById('m-item-aisle').value=item.aisle_id;
+  }
+}
+
+function closeModal(){document.getElementById('modalOverlay').hidden=true;editingId=null;modalType=null}
+function closeModalOutside(e){if(e.target===document.getElementById('modalOverlay'))closeModal()}
+
+// ── UTILS ──
+function renderEmpty(id,icon,title,sub){document.getElementById(id).innerHTML=`<div class="empty"><div class="empty-icon">${icon}</div><div class="empty-title">${title}</div><div class="empty-sub">${sub}</div></div>`}
+let toastT,toastT2;
+function toast(m,type=''){
+  const e=document.getElementById('toast');
+  e.textContent=m;e.className='toast on'+(type?' '+type:'');
+  clearTimeout(toastT);clearTimeout(toastT2);
+  toastT=setTimeout(()=>e.classList.remove('on'),3000);
+  toastT2=setTimeout(()=>e.className='toast',3300);
+}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+// ── BOOT ──
+(async()=>{
+  const {data:{user}}=await sb.auth.getUser();
+  if(user)await loadDash();
+  else{document.getElementById('v-auth').hidden=false}
+})();
+</script>
+</body>
+</html>

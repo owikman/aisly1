@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#4f46e5">
+<title>Aisly — Find it faster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --p:#4f46e5;--p50:#eef2ff;--p700:#4338ca;
+  --grad:linear-gradient(135deg,#4f46e5 0%,#06b6d4 100%);
+  --bg:#f8fafc;--white:#fff;--text:#0f172a;--t2:#64748b;--t3:#94a3b8;
+  --border:#e2e8f0;--success:#10b981;
+  --sh:0 1px 3px rgba(0,0,0,.08);--sh-md:0 4px 12px rgba(0,0,0,.08);--sh-lg:0 8px 24px rgba(0,0,0,.12);
+  --r:12px
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100svh;-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;min-height:100svh;background:var(--white);position:relative;box-shadow:0 0 40px rgba(0,0,0,.06)}
+[hidden]{display:none!important}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);
+  padding:0 16px;height:56px;display:flex;align-items:center;gap:10px}
+.nav-logo{font-size:21px;font-weight:800;color:var(--p);letter-spacing:-0.5px}
+.nav-back{width:36px;height:36px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text);flex-shrink:0}
+.nav-back:hover{background:var(--p50)}
+.nav-title{font-size:15px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-link{margin-left:auto;font-size:13px;font-weight:600;color:var(--p);text-decoration:none;white-space:nowrap}
+
+/* HERO */
+.hero{background:var(--grad);padding:44px 24px 36px;color:#fff;text-align:center}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.2);color:#fff;font-size:11px;
+  font-weight:700;padding:4px 12px;border-radius:100px;letter-spacing:.8px;text-transform:uppercase;margin-bottom:18px}
+.hero h1{font-size:34px;font-weight:800;line-height:1.15;letter-spacing:-1px;margin-bottom:10px}
+.hero p{font-size:15px;opacity:.85;line-height:1.5;margin-bottom:28px}
+.hero-search{display:flex;background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh-lg)}
+.hero-search input{flex:1;border:none;outline:none;padding:14px 16px;font-size:15px;font-family:inherit;color:var(--text)}
+.hero-search input::placeholder{color:var(--t3)}
+.hero-search button{background:var(--p);color:#fff;border:none;padding:0 22px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.hero-search button:hover{background:var(--p700)}
+
+/* SECTION */
+.section{padding:22px 16px}
+.sec-title{font-size:12px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px}
+
+/* STORE CARDS */
+.store-list{display:flex;flex-direction:column;gap:10px}
+.store-card{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--white);
+  border:1.5px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s}
+.store-card:hover{border-color:#c7d2fe;box-shadow:var(--sh-md)}
+.store-icon{width:46px;height:46px;background:var(--p50);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.store-info{flex:1;min-width:0}
+.store-name{font-size:15px;font-weight:600}
+.store-meta{font-size:13px;color:var(--t2);margin-top:2px}
+.store-chevron{color:var(--t3);font-size:20px;font-weight:300}
+
+/* STORE HEADER */
+.store-hdr{padding:20px 16px 4px}
+.store-hdr-name{font-size:26px;font-weight:800;letter-spacing:-.5px}
+.store-hdr-meta{font-size:14px;color:var(--t2);margin-top:5px;display:flex;gap:12px;flex-wrap:wrap}
+.store-hdr-badge{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:500;color:var(--t2)}
+
+/* ITEM SEARCH */
+.item-search{margin:16px 16px 0;display:flex;align-items:center;background:var(--bg);
+  border:2px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color .2s}
+.item-search:focus-within{border-color:var(--p)}
+.item-search input{flex:1;border:none;background:transparent;outline:none;padding:13px 14px;font-size:15px;font-family:inherit;color:var(--text)}
+.item-search input::placeholder{color:var(--t3)}
+.item-search button{background:var(--p);color:#fff;border:none;padding:0 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;height:100%;min-height:46px}
+
+/* AISLE PILLS */
+.aisle-pills{display:flex;flex-wrap:wrap;gap:8px;padding:14px 16px 0}
+.aisle-pill{padding:7px 14px;background:var(--p50);color:var(--p);border-radius:100px;
+  font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid transparent;transition:all .15s;white-space:nowrap}
+.aisle-pill:hover,.aisle-pill.active{background:var(--p);color:#fff}
+
+/* ITEM RESULTS */
+.item-results{padding:10px 16px}
+.item-card{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg);
+  border-radius:10px;cursor:pointer;margin-bottom:8px;transition:background .15s;border:1.5px solid transparent}
+.item-card:hover{background:var(--p50);border-color:#c7d2fe}
+.item-card-info{flex:1}
+.item-card-name{font-size:15px;font-weight:600}
+.item-card-sub{font-size:12px;color:var(--t2);margin-top:2px}
+.item-card-badge{padding:3px 10px;background:var(--p50);color:var(--p);border-radius:100px;font-size:11px;font-weight:700;white-space:nowrap}
+
+/* FOUND */
+.found-hero{background:var(--grad);padding:36px 24px 52px;color:#fff;text-align:center}
+.found-emoji{font-size:48px;margin-bottom:10px}
+.found-eyebrow{font-size:12px;font-weight:600;opacity:.8;text-transform:uppercase;letter-spacing:.8px}
+.found-name{font-size:28px;font-weight:800;letter-spacing:-.5px;margin-top:4px}
+
+.aisle-card{margin:-32px 16px 0;position:relative;z-index:1;background:var(--white);
+  border-radius:16px;box-shadow:var(--sh-lg);padding:22px;border-top:4px solid var(--p)}
+.aisle-card-label{font-size:11px;font-weight:700;color:var(--p);text-transform:uppercase;letter-spacing:1px}
+.aisle-card-name{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-top:4px}
+.aisle-card-desc{font-size:14px;color:var(--t2);margin-top:4px}
+.aisle-card-loc{display:flex;align-items:flex-start;gap:8px;margin-top:14px;padding-top:14px;
+  border-top:1px solid var(--border);font-size:14px;color:var(--t2)}
+.aisle-card-loc-icon{color:var(--p);flex-shrink:0;margin-top:1px}
+
+/* STORE MAP */
+.map-section{padding:22px 16px}
+.map-label{font-size:12px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px}
+.map-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.map-tile{padding:12px 8px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;text-align:center;transition:all .2s}
+.map-tile.hit{background:var(--p50);border-color:var(--p);box-shadow:0 0 0 2px var(--p);animation:tile-glow 2s ease-in-out infinite}
+@keyframes tile-glow{0%,100%{box-shadow:0 0 0 2px var(--p)}50%{box-shadow:0 0 0 5px rgba(79,70,229,.2)}}
+.map-tile-icon{font-size:16px}
+.map-tile-name{font-size:11px;font-weight:600;color:var(--t2);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.map-tile.hit .map-tile-name{color:var(--p)}
+
+/* EMPTY & LOADING */
+.empty{text-align:center;padding:44px 24px}
+.empty-icon{font-size:42px;margin-bottom:12px}
+.empty-title{font-size:16px;font-weight:700;margin-bottom:6px}
+.empty-sub{font-size:14px;color:var(--t2);line-height:1.5}
+.loading{display:flex;flex-direction:column;align-items:center;gap:12px;padding:44px;color:var(--t2);font-size:14px}
+.spin{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--p);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;z-index:999;transform:translateX(-50%) translateY(10px);
+  background:var(--text);color:#fff;padding:10px 20px;border-radius:100px;font-size:14px;font-weight:500;
+  opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── MOBILE ── */
+@media(max-width:480px){
+  .app{box-shadow:none}
+  /* Prevent iOS auto-zoom on input focus */
+  input,select,textarea{font-size:16px!important}
+  .hero{padding:36px 20px 32px}
+  .hero h1{font-size:28px}
+  .hero-search button{padding:0 16px;font-size:13px}
+  .nav{padding:0 12px;height:52px}
+  .nav-logo{font-size:19px}
+  .section{padding:18px 14px}
+  .store-card{padding:12px 14px}
+  .store-icon{width:42px;height:42px;font-size:20px}
+  .item-search{margin:14px 14px 0}
+  .aisle-pills{padding:12px 14px 0;gap:7px}
+  .aisle-pill{padding:8px 14px;font-size:13px;min-height:36px}
+  .item-results{padding:10px 14px}
+  .item-card{padding:13px 12px;min-height:56px}
+  .found-hero{padding:28px 20px 48px}
+  .found-name{font-size:24px}
+  .aisle-card{margin:-28px 14px 0;padding:18px}
+  .aisle-card-name{font-size:21px}
+  .map-section{padding:18px 14px}
+  .map-grid{grid-template-columns:repeat(2,1fr)}
+  /* Safe area bottom */
+  .map-section{padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HOME -->
+  <div id="v-home">
+    <nav class="nav">
+      <div class="nav-logo">aisly</div>
+      <a href="admin.html" class="nav-link">Store owners →</a>
+    </nav>
+    <div class="hero">
+      <div class="hero-badge">Free for everyone</div>
+      <h1>Find anything<br>in any store.</h1>
+      <p>Search your store, find your item,<br>know your aisle in seconds.</p>
+      <div class="hero-search">
+        <input id="storeQ" type="text" placeholder="Search for a store…" autocomplete="off" autocorrect="off">
+        <button onclick="searchStores()">Search</button>
+      </div>
+    </div>
+    <div class="section">
+      <div class="sec-title">Recently Added Stores</div>
+      <div class="store-list" id="recentList"><div class="loading"><div class="spin"></div>Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="v-results" hidden>
+    <nav class="nav">
+      <button class="nav-back" onclick="show('v-home')">←</button>
+      <span class="nav-title" id="resultsTitle">Stores</span>
+    </nav>
+    <div class="section">
+      <div class="store-list" id="resultsList"></div>
+    </div>
+  </div>
+
+  <!-- STORE -->
+  <div id="v-store" hidden>
+    <nav class="nav">
+      <button class="nav-back" id="storeBack" onclick="show('v-home')">←</button>
+      <span class="nav-title" id="storeNavName"></span>
+    </nav>
+    <div class="store-hdr">
+      <div class="store-hdr-name" id="storeName"></div>
+      <div class="store-hdr-meta">
+        <span class="store-hdr-badge">📍 <span id="storeCity"></span></span>
+        <span class="store-hdr-badge">🏷️ <span id="storeAisles"></span> aisles</span>
+      </div>
+    </div>
+    <div class="item-search">
+      <input id="itemQ" type="text" placeholder="What are you looking for?" autocomplete="off" autocorrect="off" oninput="debounceSearch()">
+      <button onclick="searchItems()">Find</button>
+    </div>
+    <div class="aisle-pills" id="aislePills"></div>
+    <div id="itemArea"></div>
+    <div style="height:24px"></div>
+  </div>
+
+  <!-- FOUND -->
+  <div id="v-found" hidden>
+    <nav class="nav" style="position:relative;z-index:2">
+      <button class="nav-back" onclick="show('v-store')">←</button>
+      <span class="nav-title">Found it!</span>
+    </nav>
+    <div class="found-hero">
+      <div class="found-emoji">🎯</div>
+      <div class="found-eyebrow">You're looking for</div>
+      <div class="found-name" id="foundName"></div>
+    </div>
+    <div class="aisle-card">
+      <div class="aisle-card-label">Located in</div>
+      <div class="aisle-card-name" id="foundAisle"></div>
+      <div class="aisle-card-desc" id="foundAisleDesc"></div>
+      <div class="aisle-card-loc">
+        <span class="aisle-card-loc-icon">📍</span>
+        <span id="foundLoc"></span>
+      </div>
+    </div>
+    <div class="map-section">
+      <div class="map-label">Store Map</div>
+      <div class="map-grid" id="mapGrid"></div>
+    </div>
+    <div style="height:24px"></div>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+<script>
+'use strict';
+const SURL='https://ulvdtjsrdqnffvseqkmp.supabase.co';
+const SKEY='sb_publishable_Ll9YN_7aObyWFwO2n2qKjw_yVf2piHi';
+const sb=supabase.createClient(SURL,SKEY);
+
+let store=null, aisles=[], items={}, debT=null;
+
+// ── Views ──
+function show(id){
+  ['v-home','v-results','v-store','v-found'].forEach(v=>document.getElementById(v).hidden=v!==id);
+}
+
+// ── Boot ──
+async function boot(){
+  document.getElementById('storeQ').addEventListener('keydown',e=>{if(e.key==='Enter')searchStores()});
+  document.getElementById('itemQ').addEventListener('keydown',e=>{if(e.key==='Enter')searchItems()});
+  const {data}=await sb.from('stores').select('id,name,city,country').order('created_at',{ascending:false}).limit(8);
+  renderStoreList('recentList',data||[]);
+}
+
+// ── Store Search ──
+async function searchStores(){
+  const q=document.getElementById('storeQ').value.trim();
+  if(!q)return;
+  document.getElementById('resultsTitle').textContent=`Results for "${q}"`;
+  show('v-results');
+  document.getElementById('resultsList').innerHTML='<div class="loading"><div class="spin"></div>Searching…</div>';
+  const {data}=await sb.from('stores').select('id,name,city,country').ilike('name',`%${q}%`).limit(20);
+  renderStoreList('resultsList',data||[]);
+}
+
+function renderStoreList(id,list){
+  const el=document.getElementById(id);
+  if(!list.length){el.innerHTML='<div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">No stores found</div><div class="empty-sub">Try a different name, or ask your store to join Aisly</div></div>';return}
+  el.innerHTML=list.map(s=>`<div class="store-card" onclick="openStore('${s.id}','${esc(s.name)}')">
+    <div class="store-icon">🏪</div>
+    <div class="store-info"><div class="store-name">${esc(s.name)}</div>
+    <div class="store-meta">${[s.city,s.country].filter(Boolean).map(esc).join(', ')||'No location set'}</div></div>
+    <div class="store-chevron">›</div>
+  </div>`).join('');
+}
+
+// ── Open Store ──
+async function openStore(id,name){
+  show('v-store');
+  document.getElementById('storeNavName').textContent=name;
+  document.getElementById('storeName').textContent=name;
+  document.getElementById('storeCity').textContent='…';
+  document.getElementById('storeAisles').textContent='…';
+  document.getElementById('aislePills').innerHTML='';
+  document.getElementById('itemArea').innerHTML='<div class="loading"><div class="spin"></div>Loading store…</div>';
+  document.getElementById('itemQ').value='';
+
+  const {data,error}=await sb.from('stores').select('*,aisles(id,name,description,position)').eq('id',id).single();
+  if(error||!data){toast('Could not load store');return}
+
+  store=data;
+  aisles=(data.aisles||[]).sort((a,b)=>a.position-b.position);
+
+  document.getElementById('storeCity').textContent=[data.city,data.country].filter(Boolean).join(', ')||'Location not set';
+  document.getElementById('storeAisles').textContent=aisles.length;
+  document.getElementById('storeNavName').textContent=data.name;
+
+  // Aisle pills
+  document.getElementById('aislePills').innerHTML=aisles.map(a=>`<div class="aisle-pill" data-id="${a.id}" onclick="browseAisle('${a.id}',this)">${esc(a.name)}</div>`).join('');
+  document.getElementById('itemArea').innerHTML='';
+}
+
+// ── Browse Aisle ──
+async function browseAisle(aisleId,el){
+  document.querySelectorAll('.aisle-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  const area=document.getElementById('itemArea');
+  area.innerHTML='<div class="loading"><div class="spin"></div></div>';
+  const {data}=await sb.from('items').select('id,name,description,location_detail,category,aisle_id').eq('aisle_id',aisleId).order('name');
+  if(!data?.length){area.innerHTML='<div class="section"><div class="empty"><div class="empty-sub">No items added to this aisle yet</div></div></div>';return}
+  data.forEach(i=>items[i.id]=i);
+  area.innerHTML=`<div class="item-results">${data.map(i=>`<div class="item-card" onclick="showFound('${i.id}')">
+    <div class="item-card-info"><div class="item-card-name">${esc(i.name)}</div>${i.description?`<div class="item-card-sub">${esc(i.description)}</div>`:''}</div>
+    ${i.category?`<div class="item-card-badge">${esc(i.category)}</div>`:''}
+  </div>`).join('')}</div>`;
+}
+
+// ── Search Items ──
+function debounceSearch(){clearTimeout(debT);debT=setTimeout(searchItems,320)}
+async function searchItems(){
+  const q=document.getElementById('itemQ').value.trim();
+  if(!q||!store)return;
+  document.querySelectorAll('.aisle-pill').forEach(p=>p.classList.remove('active'));
+  const area=document.getElementById('itemArea');
+  area.innerHTML='<div class="loading"><div class="spin"></div></div>';
+  const {data}=await sb.from('items').select('id,name,description,location_detail,category,aisle_id,aisle:aisles(id,name,description)').eq('store_id',store.id).ilike('name',`%${q}%`).limit(12);
+  if(!data?.length){area.innerHTML='<div class="section"><div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">Not found</div><div class="empty-sub">This item hasn\'t been added yet. Ask the store to add it to Aisly.</div></div></div>';return}
+  data.forEach(i=>items[i.id]=i);
+  area.innerHTML=`<div class="item-results">${data.map(i=>`<div class="item-card" onclick="showFound('${i.id}')">
+    <div class="item-card-info"><div class="item-card-name">${esc(i.name)}</div><div class="item-card-sub">${esc(i.aisle?.name||'')}</div></div>
+    ${i.category?`<div class="item-card-badge">${esc(i.category)}</div>`:''}
+  </div>`).join('')}</div>`;
+}
+
+// ── Show Found ──
+function showFound(id){
+  const item=items[id];
+  if(!item)return;
+  const aisle=aisles.find(a=>a.id===item.aisle_id)||(item.aisle)||{name:'Unknown Aisle'};
+  document.getElementById('foundName').textContent=item.name;
+  document.getElementById('foundAisle').textContent=aisle.name;
+  document.getElementById('foundAisleDesc').textContent=aisle.description||'';
+  document.getElementById('foundLoc').textContent=item.location_detail||'Check with store staff for exact shelf position';
+  document.getElementById('mapGrid').innerHTML=aisles.map(a=>`<div class="map-tile${a.id===aisle.id?' hit':''}">
+    <div class="map-tile-icon">${a.id===aisle.id?'📍':'🏷️'}</div>
+    <div class="map-tile-name">${esc(a.name)}</div>
+  </div>`).join('');
+  show('v-found');
+}
+
+// ── Utils ──
+let toastT;
+function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('on'),3000)}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+boot();
+</script>
+</body>
+</html>
