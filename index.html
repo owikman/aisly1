@@ -255,7 +255,35 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
       </div>
     </div>
     <div class="section">
-      <div class="sec-title">Recently Added Stores</div>
+      <div class="sec-title">Example Stores</div>
+      <div class="store-list">
+        <div class="store-card" onclick="openStoreByName('Sunrise Supermarket')">
+          <div class="store-icon">🛒</div>
+          <div class="store-info">
+            <div class="store-name">Sunrise Supermarket</div>
+            <div class="store-meta">London, UK · 11 aisles · 70+ items</div>
+          </div>
+          <div class="store-chevron">›</div>
+        </div>
+        <div class="store-card" onclick="openStoreByName('TechZone Electronics')">
+          <div class="store-icon">💻</div>
+          <div class="store-info">
+            <div class="store-name">TechZone Electronics</div>
+            <div class="store-meta">Manchester, UK · 8 aisles · 40+ items</div>
+          </div>
+          <div class="store-chevron">›</div>
+        </div>
+        <div class="store-card" onclick="openStoreByName('City Pharmacy')">
+          <div class="store-icon">💊</div>
+          <div class="store-info">
+            <div class="store-name">City Pharmacy</div>
+            <div class="store-meta">Birmingham, UK · 7 aisles · 40+ items</div>
+          </div>
+          <div class="store-chevron">›</div>
+        </div>
+      </div>
+      <div style="height:20px"></div>
+      <div class="sec-title">Recently Added</div>
       <div class="store-list" id="recentList"><div class="loading"><div class="spin"></div>Loading…</div></div>
     </div>
   </div>
@@ -396,6 +424,13 @@ function setMode(mode){
 function handleSearch(){
   if(searchMode==='stores') searchStores();
   else searchAnywhere();
+}
+
+// ── Open store by name (for hardcoded demo cards) ──
+async function openStoreByName(name){
+  const {data}=await sb.from('stores').select('id,name').ilike('name',`%${name}%`).limit(1).single();
+  if(!data){toast('Store not in database yet — run demo_stores.sql first');return}
+  openStore(data.id, data.name);
 }
 
 // ── Store Search ──
