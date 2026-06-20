@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <style>
 :root{
   --p:#4f46e5;--p50:#eef2ff;--p100:#e0e7ff;--p700:#4338ca;
@@ -213,6 +214,13 @@ textarea.input{resize:vertical;min-height:80px}
       <div style="font-size:13px;color:var(--t2);margin-bottom:12px">Share this link so customers can find your store on Aisly</div>
       <div style="background:var(--white);border:1.5px solid var(--p100);border-radius:10px;padding:10px 14px;font-size:13px;font-family:monospace;color:var(--p);word-break:break-all" id="storeLink"></div>
     </div>
+    <div class="card" id="qrCard" style="text-align:center">
+      <div class="card-title" style="text-align:left">📱 QR Code for your store</div>
+      <div style="font-size:13px;color:var(--t2);margin-bottom:18px">Print this and put it at your entrance — customers scan it to open your store directly in Aisly.</div>
+      <canvas id="qrCanvas" style="border-radius:12px;display:block;margin:0 auto 14px;max-width:100%"></canvas>
+      <div style="font-size:11px;color:var(--t3);word-break:break-all;margin-bottom:16px;padding:0 8px" id="qrUrl"></div>
+      <button onclick="printQR()" class="btn btn-ghost" style="width:auto;margin:0 auto">🖨️ Print QR Code</button>
+    </div>
   </div>
 
   <!-- AISLES TAB -->
@@ -310,7 +318,9 @@ async function loadDash(){
     document.getElementById('s-country').value=myStore.country||'';
     document.getElementById('s-address').value=myStore.address||'';
     document.getElementById('s-desc').value=myStore.description||'';
-    document.getElementById('storeLink').textContent=`${location.origin.replace('admin.html','')}index.html`;
+    const baseUrl=location.origin+(location.pathname.replace('admin.html',''));
+    document.getElementById('storeLink').textContent=`${baseUrl}index.html`;
+    generateQR(baseUrl);
   }
   await loadAisles();
 }
@@ -492,6 +502,18 @@ function toast(m,type=''){
   toastT2=setTimeout(()=>e.className='toast',3300);
 }
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+// ── QR CODE ──
+function generateQR(baseUrl){
+  if(!myStore||typeof QRCode==='undefined')return;
+  const url=`${baseUrl}index.html#store=${myStore.id}`;
+  document.getElementById('qrUrl').textContent=url;
+  QRCode.toCanvas(document.getElementById('qrCanvas'),url,{width:200,margin:2,color:{dark:'#0f172a',light:'#ffffff'}},err=>{if(err)console.error(err)});
+}
+
+function printQR(){
+  window.print();
+}
 
 // ── BOOT ──
 (async()=>{

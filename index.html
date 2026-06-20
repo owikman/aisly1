@@ -15,7 +15,7 @@
   --p:#4f46e5;--p50:#eef2ff;--p700:#4338ca;
   --grad:linear-gradient(135deg,#4f46e5 0%,#06b6d4 100%);
   --bg:#f8fafc;--white:#fff;--text:#0f172a;--t2:#64748b;--t3:#94a3b8;
-  --border:#e2e8f0;--success:#10b981;
+  --border:#e2e8f0;--success:#10b981;--danger:#ef4444;
   --sh:0 1px 3px rgba(0,0,0,.08);--sh-md:0 4px 12px rgba(0,0,0,.08);--sh-lg:0 8px 24px rgba(0,0,0,.12);
   --r:12px
 }
@@ -36,16 +36,26 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .nav-link{margin-left:auto;font-size:13px;font-weight:600;color:var(--p);text-decoration:none;white-space:nowrap}
 
 /* HERO */
-.hero{background:var(--grad);padding:44px 24px 36px;color:#fff;text-align:center}
+.hero{background:var(--grad);padding:36px 24px 28px;color:#fff;text-align:center}
 .hero-badge{display:inline-block;background:rgba(255,255,255,.2);color:#fff;font-size:11px;
-  font-weight:700;padding:4px 12px;border-radius:100px;letter-spacing:.8px;text-transform:uppercase;margin-bottom:18px}
-.hero h1{font-size:34px;font-weight:800;line-height:1.15;letter-spacing:-1px;margin-bottom:10px}
-.hero p{font-size:15px;opacity:.85;line-height:1.5;margin-bottom:28px}
-.hero-search{display:flex;background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh-lg)}
+  font-weight:700;padding:4px 12px;border-radius:100px;letter-spacing:.8px;text-transform:uppercase;margin-bottom:16px}
+.hero h1{font-size:32px;font-weight:800;line-height:1.15;letter-spacing:-1px;margin-bottom:8px}
+.hero p{font-size:15px;opacity:.85;line-height:1.5;margin-bottom:20px}
+.hero-search{display:flex;background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh-lg);margin-bottom:14px}
 .hero-search input{flex:1;border:none;outline:none;padding:14px 16px;font-size:15px;font-family:inherit;color:var(--text)}
 .hero-search input::placeholder{color:var(--t3)}
-.hero-search button{background:var(--p);color:#fff;border:none;padding:0 22px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.hero-search button{background:var(--p);color:#fff;border:none;padding:0 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
 .hero-search button:hover{background:var(--p700)}
+
+/* MODE TOGGLE + NEAR ME */
+.hero-extras{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.mode-toggle{display:flex;background:rgba(0,0,0,.2);border-radius:100px;padding:3px;gap:2px}
+.mode-btn{padding:7px 14px;border:none;border-radius:100px;font-size:13px;font-weight:600;
+  color:rgba(255,255,255,.7);background:transparent;cursor:pointer;font-family:inherit;transition:all .2s}
+.mode-btn.active{background:#fff;color:var(--p)}
+.near-btn{padding:8px 16px;border:none;border-radius:100px;background:rgba(255,255,255,.2);
+  color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .2s;white-space:nowrap}
+.near-btn:hover{background:rgba(255,255,255,.3)}
 
 /* SECTION */
 .section{padding:22px 16px}
@@ -61,7 +71,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .store-info{flex:1;min-width:0}
 .store-name{font-size:15px;font-weight:600}
 .store-meta{font-size:13px;color:var(--t2);margin-top:2px}
-.store-chevron{color:var(--t3);font-size:20px;font-weight:300}
+.store-chevron{color:var(--t3);font-size:20px}
 
 /* STORE HEADER */
 .store-hdr{padding:20px 16px 4px}
@@ -85,20 +95,55 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 
 /* ITEM RESULTS */
 .item-results{padding:10px 16px}
-.item-card{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg);
+.item-card{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg);
   border-radius:10px;cursor:pointer;margin-bottom:8px;transition:background .15s;border:1.5px solid transparent}
 .item-card:hover{background:var(--p50);border-color:#c7d2fe}
-.item-card-info{flex:1}
+.item-card-info{flex:1;min-width:0}
 .item-card-name{font-size:15px;font-weight:600}
 .item-card-sub{font-size:12px;color:var(--t2);margin-top:2px}
-.item-card-badge{padding:3px 10px;background:var(--p50);color:var(--p);border-radius:100px;font-size:11px;font-weight:700;white-space:nowrap}
+.item-card-badge{padding:3px 10px;background:var(--p50);color:var(--p);border-radius:100px;font-size:11px;font-weight:700;white-space:nowrap;flex-shrink:0}
+.item-add{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);background:var(--white);
+  color:var(--t2);font-size:18px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all .15s;line-height:1}
+.item-add:hover{border-color:var(--p);color:var(--p)}
+.item-add.in-list{background:var(--success);border-color:var(--success);color:#fff;font-size:14px}
+
+/* FLOATING LIST BUTTON */
+.list-fab{position:fixed;bottom:28px;right:50%;transform:translateX(calc(50% + 220px));
+  background:var(--p);color:#fff;border:none;border-radius:100px;padding:12px 20px;
+  font-size:14px;font-weight:700;cursor:pointer;box-shadow:var(--sh-lg);z-index:50;
+  display:flex;align-items:center;gap:8px;transition:transform .2s,opacity .2s;white-space:nowrap}
+.list-fab:active{transform:translateX(calc(50% + 220px)) scale(.95)}
+.list-fab-count{background:rgba(255,255,255,.25);border-radius:100px;padding:2px 8px;font-size:12px}
+
+/* SHOPPING LIST VIEW */
+.list-empty{text-align:center;padding:60px 24px}
+.list-group{margin-bottom:20px}
+.list-group-hdr{font-size:12px;font-weight:700;color:var(--t2);text-transform:uppercase;
+  letter-spacing:1px;padding:0 16px;margin-bottom:8px}
+.list-row{display:flex;align-items:center;gap:10px;padding:13px 16px;
+  background:var(--white);border:1.5px solid var(--border);border-radius:10px;margin-bottom:6px;transition:all .2s}
+.list-row.done{opacity:.5}
+.list-row.done .list-row-name{text-decoration:line-through}
+.list-check{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:transparent;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;
+  flex-shrink:0;transition:all .15s;color:transparent}
+.list-row.done .list-check{background:var(--success);border-color:var(--success);color:#fff}
+.list-row-name{flex:1;font-size:15px;font-weight:500}
+.list-remove{width:28px;height:28px;border-radius:50%;border:none;background:transparent;
+  color:var(--t3);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.list-remove:hover{color:var(--danger);background:var(--bg)}
+.list-actions-bar{display:flex;gap:10px;padding:16px;border-top:1px solid var(--border);
+  position:sticky;bottom:0;background:var(--white)}
+.list-actions-bar button{flex:1;padding:12px;border-radius:var(--r);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;border:none}
+.btn-clear-list{background:var(--bg);color:var(--t2);border:1.5px solid var(--border)!important}
+.btn-store-link{background:var(--p);color:#fff}
 
 /* FOUND */
 .found-hero{background:var(--grad);padding:36px 24px 52px;color:#fff;text-align:center}
 .found-emoji{font-size:48px;margin-bottom:10px}
 .found-eyebrow{font-size:12px;font-weight:600;opacity:.8;text-transform:uppercase;letter-spacing:.8px}
 .found-name{font-size:28px;font-weight:800;letter-spacing:-.5px;margin-top:4px}
-
 .aisle-card{margin:-32px 16px 0;position:relative;z-index:1;background:var(--white);
   border-radius:16px;box-shadow:var(--sh-lg);padding:22px;border-top:4px solid var(--p)}
 .aisle-card-label{font-size:11px;font-weight:700;color:var(--p);text-transform:uppercase;letter-spacing:1px}
@@ -108,38 +153,41 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   border-top:1px solid var(--border);font-size:14px;color:var(--t2)}
 .aisle-card-loc-icon{color:var(--p);flex-shrink:0;margin-top:1px}
 
-/* STORE MAP */
+/* FLOOR PLAN */
 .map-section{padding:22px 16px}
 .map-label{font-size:12px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px}
-
 .floor-plan{background:#f1f5f9;border-radius:16px;padding:14px;border:1.5px solid var(--border)}
 .floor-gate{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 0 12px;
   font-size:12px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px}
 .floor-gate-line{flex:1;height:1px;background:var(--border)}
-
 .floor-aisle{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--white);
   border-radius:10px;margin-bottom:6px;border:1.5px solid var(--border);transition:all .2s;position:relative}
 .floor-aisle:last-of-type{margin-bottom:0}
 .floor-aisle.hit{background:var(--p50);border-color:var(--p);box-shadow:0 0 0 2px rgba(79,70,229,.15)}
-
 .floor-num{width:26px;height:26px;border-radius:7px;background:var(--bg);border:1px solid var(--border);
-  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;
-  color:var(--t2);flex-shrink:0;transition:all .2s}
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--t2);flex-shrink:0;transition:all .2s}
 .floor-aisle.hit .floor-num{background:var(--p);color:#fff;border-color:var(--p)}
-
 .floor-info{flex:1;min-width:0}
 .floor-name{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .floor-desc{font-size:11px;color:var(--t3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .floor-aisle.hit .floor-name{color:var(--p)}
-
 .floor-pin{font-size:18px;animation:pin-bounce .8s ease-in-out infinite;flex-shrink:0}
 @keyframes pin-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-
-.floor-bar{height:3px;border-radius:2px;background:var(--border);margin:0 2px 6px;transition:all .2s}
-.floor-aisle.hit + .floor-bar,.floor-aisle.hit .floor-bar{background:transparent}
-
 .floor-path{position:absolute;right:-1px;top:0;bottom:0;width:3px;background:rgba(79,70,229,.08);border-radius:0 10px 10px 0}
 .floor-aisle.hit .floor-path{background:rgba(79,70,229,.2)}
+
+/* ANYWHERE (cross-store) */
+.anywhere-group{margin-bottom:16px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
+.anywhere-store-row{display:flex;align-items:center;gap:12px;padding:14px 16px;
+  background:var(--p50);border-bottom:1px solid var(--border);cursor:pointer}
+.anywhere-store-row:hover{background:var(--p100,#e0e7ff)}
+.anywhere-store-name{font-size:15px;font-weight:700;color:var(--p)}
+.anywhere-store-meta{font-size:12px;color:var(--t2);margin-top:2px}
+.anywhere-item{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.anywhere-item:last-child{border-bottom:none}
+.anywhere-item:hover{background:var(--bg)}
+.anywhere-item-name{font-size:14px;font-weight:600;flex:1}
+.anywhere-item-loc{font-size:12px;color:var(--t2);text-align:right;flex-shrink:0;max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* EMPTY & LOADING */
 .empty{text-align:center;padding:44px 24px}
@@ -156,30 +204,28 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* ── MOBILE ── */
+/* MOBILE */
 @media(max-width:480px){
   .app{box-shadow:none}
-  /* Prevent iOS auto-zoom on input focus */
   input,select,textarea{font-size:16px!important}
-  .hero{padding:36px 20px 32px}
-  .hero h1{font-size:28px}
-  .hero-search button{padding:0 16px;font-size:13px}
+  .hero{padding:28px 18px 22px}
+  .hero h1{font-size:26px}
+  .hero-search button{padding:0 14px;font-size:13px}
   .nav{padding:0 12px;height:52px}
-  .nav-logo{font-size:19px}
   .section{padding:18px 14px}
   .store-card{padding:12px 14px}
-  .store-icon{width:42px;height:42px;font-size:20px}
   .item-search{margin:14px 14px 0}
   .aisle-pills{padding:12px 14px 0;gap:7px}
-  .aisle-pill{padding:8px 14px;font-size:13px;min-height:36px}
   .item-results{padding:10px 14px}
-  .item-card{padding:13px 12px;min-height:56px}
+  .item-card{padding:11px 12px}
   .found-hero{padding:28px 20px 48px}
-  .found-name{font-size:24px}
+  .found-name{font-size:22px}
   .aisle-card{margin:-28px 14px 0;padding:18px}
-  .aisle-card-name{font-size:21px}
-  .map-section{padding:18px 14px}
-  .map-section{padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+  .aisle-card-name{font-size:20px}
+  .map-section{padding:18px 14px;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+  .list-fab{right:16px;transform:none;bottom:calc(20px + env(safe-area-inset-bottom,0px))}
+  .list-fab:active{transform:scale(.95)}
+  .list-actions-bar{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
 }
 </style>
 </head>
@@ -198,7 +244,14 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
       <p>Search your store, find your item,<br>know your aisle in seconds.</p>
       <div class="hero-search">
         <input id="storeQ" type="text" placeholder="Search for a store…" autocomplete="off" autocorrect="off">
-        <button onclick="searchStores()">Search</button>
+        <button id="searchBtn" onclick="handleSearch()">Search</button>
+      </div>
+      <div class="hero-extras">
+        <div class="mode-toggle">
+          <button class="mode-btn active" id="m-stores" onclick="setMode('stores')">🏪 Stores</button>
+          <button class="mode-btn" id="m-items" onclick="setMode('items')">🔍 Find Item</button>
+        </div>
+        <button class="near-btn" onclick="nearMe()">📍 Near Me</button>
       </div>
     </div>
     <div class="section">
@@ -221,7 +274,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   <!-- STORE -->
   <div id="v-store" hidden>
     <nav class="nav">
-      <button class="nav-back" id="storeBack" onclick="show('v-home')">←</button>
+      <button class="nav-back" onclick="show('v-home')">←</button>
       <span class="nav-title" id="storeNavName"></span>
     </nav>
     <div class="store-hdr">
@@ -237,13 +290,13 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
     </div>
     <div class="aisle-pills" id="aislePills"></div>
     <div id="itemArea"></div>
-    <div style="height:24px"></div>
+    <div style="height:80px"></div>
   </div>
 
   <!-- FOUND -->
   <div id="v-found" hidden>
     <nav class="nav" style="position:relative;z-index:2">
-      <button class="nav-back" onclick="show('v-store')">←</button>
+      <button class="nav-back" id="foundBack" onclick="show('v-store')">←</button>
       <span class="nav-title">Found it!</span>
     </nav>
     <div class="found-hero">
@@ -267,27 +320,82 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
     <div style="height:24px"></div>
   </div>
 
+  <!-- SHOPPING LIST -->
+  <div id="v-list" hidden>
+    <nav class="nav">
+      <button class="nav-back" onclick="show('v-store')">←</button>
+      <span class="nav-title">Shopping List</span>
+    </nav>
+    <div style="flex:1;overflow-y:auto;padding:16px 0" id="listContent"></div>
+    <div class="list-actions-bar">
+      <button class="btn-clear-list" onclick="clearList()" style="flex:1;padding:12px;border-radius:var(--r);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--bg);color:var(--t2);border:1.5px solid var(--border)">Clear all</button>
+      <button class="btn-store-link" onclick="show('v-store')" style="flex:2;padding:12px;border-radius:var(--r);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--p);color:#fff;border:none">← Back to store</button>
+    </div>
+  </div>
+
+  <!-- ANYWHERE (cross-store search) -->
+  <div id="v-anywhere" hidden>
+    <nav class="nav">
+      <button class="nav-back" onclick="show('v-home')">←</button>
+      <span class="nav-title" id="anywhereTitle">Find item</span>
+    </nav>
+    <div style="padding:16px" id="anywhereResults"></div>
+  </div>
+
 </div>
+
+<!-- Floating list button -->
+<button class="list-fab" id="listFab" hidden onclick="showList()">
+  🛒 My List <span class="list-fab-count" id="listFabCount">0</span>
+</button>
+
 <div class="toast" id="toast"></div>
+
 <script>
 'use strict';
 const SURL='https://ulvdtjsrdqnffvseqkmp.supabase.co';
 const SKEY='sb_publishable_Ll9YN_7aObyWFwO2n2qKjw_yVf2piHi';
 const sb=supabase.createClient(SURL,SKEY);
 
-let store=null, aisles=[], items={}, debT=null;
+const LIST_KEY='aisly_list';
+let store=null, aisles=[], items={}, debT=null, searchMode='stores';
 
 // ── Views ──
+const VIEWS=['v-home','v-results','v-store','v-found','v-list','v-anywhere'];
 function show(id){
-  ['v-home','v-results','v-store','v-found'].forEach(v=>document.getElementById(v).hidden=v!==id);
+  VIEWS.forEach(v=>document.getElementById(v).hidden=v!==id);
+  const fab=document.getElementById('listFab');
+  fab.hidden=id!=='v-store';
 }
 
 // ── Boot ──
 async function boot(){
-  document.getElementById('storeQ').addEventListener('keydown',e=>{if(e.key==='Enter')searchStores()});
+  document.getElementById('storeQ').addEventListener('keydown',e=>{if(e.key==='Enter')handleSearch()});
   document.getElementById('itemQ').addEventListener('keydown',e=>{if(e.key==='Enter')searchItems()});
+
+  // Check URL hash for direct store link (QR code)
+  const hashMatch=window.location.hash.match(/#store=([0-9a-f-]{36})/i);
+  if(hashMatch){ openStore(hashMatch[1],''); return }
+
   const {data}=await sb.from('stores').select('id,name,city,country').order('created_at',{ascending:false}).limit(8);
   renderStoreList('recentList',data||[]);
+}
+
+// ── Search Mode ──
+function setMode(mode){
+  searchMode=mode;
+  document.getElementById('m-stores').classList.toggle('active',mode==='stores');
+  document.getElementById('m-items').classList.toggle('active',mode==='items');
+  const input=document.getElementById('storeQ');
+  const btn=document.getElementById('searchBtn');
+  if(mode==='stores'){input.placeholder='Search for a store…';btn.textContent='Search'}
+  else{input.placeholder='Search for an item in any store…';btn.textContent='Find'}
+  input.focus();
+}
+
+function handleSearch(){
+  if(searchMode==='stores') searchStores();
+  else searchAnywhere();
 }
 
 // ── Store Search ──
@@ -312,16 +420,77 @@ function renderStoreList(id,list){
   </div>`).join('');
 }
 
+// ── Near Me ──
+async function nearMe(){
+  if(!navigator.geolocation){toast('Location not supported in this browser');return}
+  toast('Getting your location…');
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    try{
+      const {latitude:lat,longitude:lng}=pos.coords;
+      const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,{headers:{'Accept-Language':'en'}});
+      const d=await r.json();
+      const city=d.address?.city||d.address?.town||d.address?.village||d.address?.county||'';
+      if(!city){toast('Could not detect your city');return}
+      document.getElementById('resultsTitle').textContent=`Stores near ${city}`;
+      show('v-results');
+      document.getElementById('resultsList').innerHTML='<div class="loading"><div class="spin"></div></div>';
+      const {data}=await sb.from('stores').select('id,name,city,country').ilike('city',`%${city}%`).limit(20);
+      renderStoreList('resultsList',data||[]);
+    }catch{toast('Could not find nearby stores')}
+  },()=>toast('Location permission denied'));
+}
+
+// ── Cross-Store Search ──
+async function searchAnywhere(){
+  const q=document.getElementById('storeQ').value.trim();
+  if(!q)return;
+  document.getElementById('anywhereTitle').textContent=`"${q}" — all stores`;
+  show('v-anywhere');
+  document.getElementById('anywhereResults').innerHTML='<div class="loading"><div class="spin"></div>Searching all stores…</div>';
+  const {data}=await sb.from('items')
+    .select('id,name,location_detail,category,aisle:aisles(id,name,description),store:stores(id,name,city,country)')
+    .ilike('name',`%${q}%`).limit(40);
+  if(!data?.length){
+    document.getElementById('anywhereResults').innerHTML='<div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">Not found in any store</div><div class="empty-sub">No stores on Aisly carry this item yet</div></div>';
+    return;
+  }
+  // Group by store
+  const byStore={};
+  data.forEach(i=>{
+    const sid=i.store?.id||'?';
+    if(!byStore[sid])byStore[sid]={s:i.store,items:[]};
+    byStore[sid].items.push(i);
+    items[i.id]=i; // cache for showFoundAnywhere
+  });
+  document.getElementById('anywhereResults').innerHTML=Object.values(byStore).map(g=>`
+    <div class="anywhere-group">
+      <div class="anywhere-store-row" onclick="openStore('${g.s.id}','${esc(g.s.name)}')">
+        <div class="store-icon" style="width:36px;height:36px;font-size:18px">🏪</div>
+        <div style="flex:1;min-width:0">
+          <div class="anywhere-store-name">${esc(g.s.name)}</div>
+          <div class="anywhere-store-meta">${[g.s.city,g.s.country].filter(Boolean).map(esc).join(', ')||'No location'}</div>
+        </div>
+        <div style="color:var(--t3)">›</div>
+      </div>
+      ${g.items.map(i=>`<div class="anywhere-item" onclick="showFoundAnywhere('${i.id}')">
+        <div class="anywhere-item-name">${esc(i.name)}</div>
+        <div class="anywhere-item-loc">${esc(i.aisle?.name||'')}</div>
+      </div>`).join('')}
+    </div>
+  `).join('');
+}
+
 // ── Open Store ──
 async function openStore(id,name){
   show('v-store');
-  document.getElementById('storeNavName').textContent=name;
-  document.getElementById('storeName').textContent=name;
+  document.getElementById('storeNavName').textContent=name||'Loading…';
+  document.getElementById('storeName').textContent=name||'…';
   document.getElementById('storeCity').textContent='…';
   document.getElementById('storeAisles').textContent='…';
   document.getElementById('aislePills').innerHTML='';
   document.getElementById('itemArea').innerHTML='<div class="loading"><div class="spin"></div>Loading store…</div>';
   document.getElementById('itemQ').value='';
+  document.getElementById('foundBack').onclick=()=>show('v-store');
 
   const {data,error}=await sb.from('stores').select('*,aisles(id,name,description,position)').eq('id',id).single();
   if(error||!data){toast('Could not load store');return}
@@ -329,13 +498,14 @@ async function openStore(id,name){
   store=data;
   aisles=(data.aisles||[]).sort((a,b)=>a.position-b.position);
 
+  document.getElementById('storeNavName').textContent=data.name;
+  document.getElementById('storeName').textContent=data.name;
   document.getElementById('storeCity').textContent=[data.city,data.country].filter(Boolean).join(', ')||'Location not set';
   document.getElementById('storeAisles').textContent=aisles.length;
-  document.getElementById('storeNavName').textContent=data.name;
 
-  // Aisle pills
   document.getElementById('aislePills').innerHTML=aisles.map(a=>`<div class="aisle-pill" data-id="${a.id}" onclick="browseAisle('${a.id}',this)">${esc(a.name)}</div>`).join('');
   document.getElementById('itemArea').innerHTML='';
+  updateListBtn();
 }
 
 // ── Browse Aisle ──
@@ -345,12 +515,9 @@ async function browseAisle(aisleId,el){
   const area=document.getElementById('itemArea');
   area.innerHTML='<div class="loading"><div class="spin"></div></div>';
   const {data}=await sb.from('items').select('id,name,description,location_detail,category,aisle_id').eq('aisle_id',aisleId).order('name');
-  if(!data?.length){area.innerHTML='<div class="section"><div class="empty"><div class="empty-sub">No items added to this aisle yet</div></div></div>';return}
-  data.forEach(i=>items[i.id]=i);
-  area.innerHTML=`<div class="item-results">${data.map(i=>`<div class="item-card" onclick="showFound('${i.id}')">
-    <div class="item-card-info"><div class="item-card-name">${esc(i.name)}</div>${i.description?`<div class="item-card-sub">${esc(i.description)}</div>`:''}</div>
-    ${i.category?`<div class="item-card-badge">${esc(i.category)}</div>`:''}
-  </div>`).join('')}</div>`;
+  if(!data?.length){area.innerHTML='<div class="section"><div class="empty"><div class="empty-sub">No items in this aisle yet</div></div></div>';return}
+  data.forEach(i=>{items[i.id]=i;items[i.id].aisle_id=aisleId});
+  area.innerHTML=`<div class="item-results">${data.map(i=>itemCardHTML(i,i.description||'')).join('')}</div>`;
 }
 
 // ── Search Items ──
@@ -362,12 +529,22 @@ async function searchItems(){
   const area=document.getElementById('itemArea');
   area.innerHTML='<div class="loading"><div class="spin"></div></div>';
   const {data}=await sb.from('items').select('id,name,description,location_detail,category,aisle_id,aisle:aisles(id,name,description)').eq('store_id',store.id).ilike('name',`%${q}%`).limit(12);
-  if(!data?.length){area.innerHTML='<div class="section"><div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">Not found</div><div class="empty-sub">This item hasn\'t been added yet. Ask the store to add it to Aisly.</div></div></div>';return}
+  if(!data?.length){area.innerHTML='<div class="section"><div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">Not found</div><div class="empty-sub">This item hasn\'t been added yet</div></div></div>';return}
   data.forEach(i=>items[i.id]=i);
-  area.innerHTML=`<div class="item-results">${data.map(i=>`<div class="item-card" onclick="showFound('${i.id}')">
-    <div class="item-card-info"><div class="item-card-name">${esc(i.name)}</div><div class="item-card-sub">${esc(i.aisle?.name||'')}</div></div>
+  area.innerHTML=`<div class="item-results">${data.map(i=>itemCardHTML(i,i.aisle?.name||'')).join('')}</div>`;
+}
+
+// ── Item Card HTML ──
+function itemCardHTML(i,subLabel){
+  const inList=isInList(i.id);
+  return `<div class="item-card" onclick="showFound('${i.id}')">
+    <div class="item-card-info">
+      <div class="item-card-name">${esc(i.name)}</div>
+      ${subLabel?`<div class="item-card-sub">${esc(subLabel)}</div>`:''}
+    </div>
     ${i.category?`<div class="item-card-badge">${esc(i.category)}</div>`:''}
-  </div>`).join('')}</div>`;
+    <button class="item-add${inList?' in-list':''}" onclick="event.stopPropagation();toggleList('${i.id}')" title="${inList?'Remove from list':'Add to list'}">${inList?'✓':'+'}</button>
+  </div>`;
 }
 
 // ── Show Found ──
@@ -375,41 +552,126 @@ function showFound(id){
   const item=items[id];
   if(!item)return;
   const aisle=aisles.find(a=>a.id===item.aisle_id)||(item.aisle)||{name:'Unknown Aisle'};
-  document.getElementById('foundName').textContent=item.name;
+  _renderFound(item.name, aisle, item.location_detail, aisles);
+  document.getElementById('foundBack').onclick=()=>show('v-store');
+  show('v-found');
+  setTimeout(()=>{const el=document.querySelector('.floor-aisle.hit');if(el)el.scrollIntoView({behavior:'smooth',block:'center'})},300);
+}
+
+function showFoundAnywhere(id){
+  const item=items[id];
+  if(!item)return;
+  const aisle=item.aisle||{name:'Unknown Aisle'};
+  _renderFound(item.name, aisle, item.location_detail, []);
+  document.getElementById('foundBack').onclick=()=>show('v-anywhere');
+  // Show open store button instead of floor plan
+  document.getElementById('floorPlan').innerHTML=`<div style="text-align:center;padding:20px">
+    <div style="font-size:13px;color:var(--t2);margin-bottom:14px">Open the store to see the full layout</div>
+    <button onclick="openStore('${item.store?.id}','${esc(item.store?.name||'')}')" style="background:var(--p);color:#fff;border:none;padding:11px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Open ${esc(item.store?.name||'Store')}</button>
+  </div>`;
+  show('v-found');
+}
+
+function _renderFound(name, aisle, locationDetail, aisleList){
+  document.getElementById('foundName').textContent=name;
   document.getElementById('foundAisle').textContent=aisle.name;
   document.getElementById('foundAisleDesc').textContent=aisle.description||'';
-  document.getElementById('foundLoc').textContent=item.location_detail||'Check with store staff for exact shelf position';
-
-  // Floor plan
-  const rows=aisles.map((a,i)=>{
+  document.getElementById('foundLoc').textContent=locationDetail||'Check with store staff for exact position';
+  const rows=aisleList.map((a,i)=>{
     const hit=a.id===aisle.id;
     return `<div class="floor-aisle${hit?' hit':''}">
       <div class="floor-num">${i+1}</div>
-      <div class="floor-info">
-        <div class="floor-name">${esc(a.name)}</div>
-        ${a.description?`<div class="floor-desc">${esc(a.description)}</div>`:''}
-      </div>
+      <div class="floor-info"><div class="floor-name">${esc(a.name)}</div>${a.description?`<div class="floor-desc">${esc(a.description)}</div>`:''}</div>
       ${hit?'<div class="floor-pin">📍</div>':''}
       <div class="floor-path"></div>
     </div>`;
   }).join('');
+  document.getElementById('floorPlan').innerHTML=aisleList.length
+    ?`<div class="floor-gate"><div class="floor-gate-line"></div>🚪 Entrance<div class="floor-gate-line"></div></div>${rows}<div class="floor-gate" style="padding:12px 0 6px"><div class="floor-gate-line"></div>🛒 Checkout<div class="floor-gate-line"></div></div>`
+    :rows;
+}
 
-  document.getElementById('floorPlan').innerHTML=`
-    <div class="floor-gate"><div class="floor-gate-line"></div>🚪 Entrance<div class="floor-gate-line"></div></div>
-    ${rows}
-    <div class="floor-gate" style="padding:12px 0 6px"><div class="floor-gate-line"></div>🛒 Checkout<div class="floor-gate-line"></div></div>`;
+// ── Shopping List ──
+function getList(){try{return JSON.parse(localStorage.getItem(LIST_KEY))||[]}catch{return[]}}
+function saveList(l){localStorage.setItem(LIST_KEY,JSON.stringify(l))}
+function isInList(id){return getList().some(i=>i.id===id)}
 
-  show('v-found');
-  // Scroll found aisle into view
-  setTimeout(()=>{
-    const el=document.querySelector('.floor-aisle.hit');
-    if(el)el.scrollIntoView({behavior:'smooth',block:'center'});
-  },300);
+function toggleList(id){
+  const item=items[id];
+  if(!item)return;
+  const aisle=aisles.find(a=>a.id===item.aisle_id)||item.aisle||{id:'',name:''};
+  let list=getList();
+  const idx=list.findIndex(i=>i.id===id);
+  if(idx>=0){list.splice(idx,1);toast('Removed from list')}
+  else{list.push({id,name:item.name,aisleId:aisle.id,aisleName:aisle.name,storeId:store?.id,storeName:store?.name,checked:false});toast('Added to list ✓')}
+  saveList(list);
+  updateListBtn();
+  // Refresh + button states
+  document.querySelectorAll('.item-add').forEach(btn=>{
+    const card=btn.closest('.item-card');
+    const cardId=btn.getAttribute('onclick')?.match(/'([^']+)'\)/)?.[1];
+    if(cardId){const inL=isInList(cardId);btn.textContent=inL?'✓':'+';btn.classList.toggle('in-list',inL)}
+  });
+}
+
+function updateListBtn(){
+  const list=getList();
+  const fab=document.getElementById('listFab');
+  const count=document.getElementById('listFabCount');
+  const inStore=VIEWS.find(v=>!document.getElementById(v).hidden)==='v-store';
+  fab.hidden=!inStore||list.length===0;
+  count.textContent=list.length;
+}
+
+function showList(){
+  renderList();
+  show('v-list');
+}
+
+function renderList(){
+  const list=getList();
+  const el=document.getElementById('listContent');
+  if(!list.length){
+    el.innerHTML='<div class="empty"><div class="empty-icon">🛒</div><div class="empty-title">Your list is empty</div><div class="empty-sub">Tap + on any item to add it here</div></div>';
+    return;
+  }
+  // Group by aisle
+  const byAisle={};
+  list.forEach(i=>{
+    const k=i.aisleId||'__other';
+    if(!byAisle[k])byAisle[k]={name:i.aisleName||'Other',items:[]};
+    byAisle[k].items.push(i);
+  });
+  el.innerHTML=Object.values(byAisle).map(g=>`
+    <div class="list-group">
+      <div class="list-group-hdr">${esc(g.name)}</div>
+      ${g.items.map(i=>`<div class="list-row${i.checked?' done':''}" id="lr-${i.id}">
+        <button class="list-check" onclick="checkListItem('${i.id}')">${i.checked?'✓':''}</button>
+        <div class="list-row-name">${esc(i.name)}</div>
+        <button class="list-remove" onclick="removeListItem('${i.id}')">✕</button>
+      </div>`).join('')}
+    </div>
+  `).join('');
+}
+
+function checkListItem(id){
+  const list=getList();
+  const item=list.find(i=>i.id===id);
+  if(item){item.checked=!item.checked;saveList(list);renderList()}
+}
+
+function removeListItem(id){
+  saveList(getList().filter(i=>i.id!==id));
+  updateListBtn();renderList();
+}
+
+function clearList(){
+  saveList([]);updateListBtn();renderList();
 }
 
 // ── Utils ──
 let toastT;
-function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('on'),3000)}
+function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('on'),2500)}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
 boot();
