@@ -1,13 +1,10 @@
--- Demo stores for showing Aisly to potential store owners
--- Run this in Supabase → SQL Editor AFTER running schema.sql
--- These stores have no owner (owner_id is a placeholder) so they are read-only demo data
-
--- NOTE: Replace '00000000-0000-0000-0000-000000000000' with your actual user ID
--- Find your user ID: Supabase → Authentication → Users → copy the UUID
+-- Demo stores for Aisly
+-- Run this in Supabase → SQL Editor
+-- It automatically uses your account as the owner
 
 DO $$
 DECLARE
-  v_owner uuid := '00000000-0000-0000-0000-000000000000'; -- REPLACE THIS
+  v_owner uuid;
 
   -- Store IDs
   v_s1 uuid;
@@ -28,6 +25,12 @@ DECLARE
   s3_firstaid uuid; s3_baby uuid; s3_dental uuid; s3_haircare uuid;
 
 BEGIN
+
+  -- Auto-detect your user account
+  SELECT id INTO v_owner FROM auth.users ORDER BY created_at LIMIT 1;
+  IF v_owner IS NULL THEN
+    RAISE EXCEPTION 'No account found. Create an account in admin.html first, then run this SQL.';
+  END IF;
 
 -- ════════════════════════════════════════
 -- STORE 1: Sunrise Supermarket
