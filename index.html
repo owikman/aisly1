@@ -167,11 +167,12 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .item-card-name{font-size:15px;font-weight:600}
 .item-card-sub{font-size:12px;color:var(--t2);margin-top:2px}
 .item-card-badge{padding:3px 10px;background:var(--p50);color:var(--p);border-radius:100px;font-size:11px;font-weight:700;white-space:nowrap;flex-shrink:0}
-.item-add{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);background:var(--white);
-  color:var(--t2);font-size:18px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;transition:all .15s;line-height:1}
+.item-add{width:38px;height:38px;border-radius:50%;border:2px solid var(--border);background:var(--white);
+  color:var(--t2);font-size:20px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all .15s;line-height:1;-webkit-tap-highlight-color:transparent}
 .item-add:hover{border-color:var(--p);color:var(--p)}
-.item-add.in-list{background:var(--success);border-color:var(--success);color:#fff;font-size:14px}
+.item-add:active{transform:scale(.9)}
+.item-add.in-list{background:var(--success);border-color:var(--success);color:#fff;font-size:15px}
 
 /* FLOATING LIST BUTTON */
 .list-fab{position:fixed;bottom:28px;right:50%;transform:translateX(calc(50% + 220px));
@@ -182,21 +183,26 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .list-fab-count{background:rgba(255,255,255,.25);border-radius:100px;padding:2px 8px;font-size:12px}
 
 /* SHOPPING LIST VIEW */
-.list-empty{text-align:center;padding:60px 24px}
-.list-group{margin-bottom:20px}
+.route-header{padding:18px 16px 10px;border-bottom:1px solid var(--border);margin-bottom:4px}
+.route-title{font-size:18px;font-weight:800;letter-spacing:-.3px}
+.route-sub{font-size:13px;color:var(--t2);margin-top:3px}
+.list-group{margin-bottom:4px}
 .list-group-hdr{font-size:12px;font-weight:700;color:var(--t2);text-transform:uppercase;
-  letter-spacing:1px;padding:0 16px;margin-bottom:8px}
+  letter-spacing:1px;padding:14px 16px 6px;display:flex;align-items:center;gap:8px}
+.stop-num{background:var(--p);color:#fff;border-radius:100px;padding:2px 8px;
+  font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
 .list-row{display:flex;align-items:center;gap:10px;padding:13px 16px;
-  background:var(--white);border:1.5px solid var(--border);border-radius:10px;margin-bottom:6px;transition:all .2s}
+  background:var(--white);border-top:1px solid var(--border);transition:all .2s}
+.list-row:last-child{border-bottom:1px solid var(--border)}
 .list-row.done{opacity:.5}
 .list-row.done .list-row-name{text-decoration:line-through}
-.list-check{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:transparent;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;
-  flex-shrink:0;transition:all .15s;color:transparent}
+.list-check{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);background:transparent;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;
+  flex-shrink:0;transition:all .15s;color:transparent;min-width:32px}
 .list-row.done .list-check{background:var(--success);border-color:var(--success);color:#fff}
 .list-row-name{flex:1;font-size:15px;font-weight:500}
-.list-remove{width:28px;height:28px;border-radius:50%;border:none;background:transparent;
-  color:var(--t3);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.list-remove{width:36px;height:36px;border-radius:50%;border:none;background:transparent;
+  color:var(--t3);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .list-remove:hover{color:var(--danger);background:var(--bg)}
 .list-actions-bar{display:flex;gap:10px;padding:16px;border-top:1px solid var(--border);
   position:sticky;bottom:0;background:var(--white)}
@@ -642,8 +648,7 @@ let store=null, aisles=[], items={}, debT=null, searchMode='stores';
 const VIEWS=['v-home','v-results','v-store','v-found','v-list','v-anywhere'];
 function show(id){
   VIEWS.forEach(v=>document.getElementById(v).hidden=v!==id);
-  const fab=document.getElementById('listFab');
-  fab.hidden=id!=='v-store';
+  updateListBtn();
 }
 
 // ── Boot ──
@@ -919,7 +924,7 @@ function toggleList(id){
   let list=getList();
   const idx=list.findIndex(i=>i.id===id);
   if(idx>=0){list.splice(idx,1);toast('Removed from list')}
-  else{list.push({id,name:item.name,aisleId:aisle.id,aisleName:aisle.name,storeId:store?.id,storeName:store?.name,checked:false});toast('Added to list ✓')}
+  else{list.push({id,name:item.name,aisleId:aisle.id,aisleName:aisle.name,aislePos:aisle.position??999,storeId:store?.id,storeName:store?.name,checked:false});toast('Added to list ✓')}
   saveList(list);
   updateListBtn();
   // Refresh + button states
@@ -934,9 +939,9 @@ function updateListBtn(){
   const list=getList();
   const fab=document.getElementById('listFab');
   const count=document.getElementById('listFabCount');
-  const inStore=VIEWS.find(v=>!document.getElementById(v).hidden)==='v-store';
-  fab.hidden=!inStore||list.length===0;
-  count.textContent=list.length;
+  const activeView=VIEWS.find(v=>!document.getElementById(v).hidden);
+  fab.hidden=activeView!=='v-store'||list.length===0;
+  if(count) count.textContent=list.length;
 }
 
 function showList(){
@@ -951,16 +956,25 @@ function renderList(){
     el.innerHTML='<div class="empty"><div class="empty-icon">🛒</div><div class="empty-title">Your list is empty</div><div class="empty-sub">Tap + on any item to add it here</div></div>';
     return;
   }
-  // Group by aisle
+  // Group by aisle, sort by aisle position for shortest route
   const byAisle={};
   list.forEach(i=>{
     const k=i.aisleId||'__other';
-    if(!byAisle[k])byAisle[k]={name:i.aisleName||'Other',items:[]};
+    if(!byAisle[k])byAisle[k]={name:i.aisleName||'Other',pos:i.aislePos??999,items:[]};
     byAisle[k].items.push(i);
   });
-  el.innerHTML=Object.values(byAisle).map(g=>`
+  const groups=Object.values(byAisle).sort((a,b)=>a.pos-b.pos);
+  const unchecked=list.filter(i=>!i.checked).length;
+  const routeHeader=`<div class="route-header">
+    <div class="route-title">🗺️ Your Route</div>
+    <div class="route-sub">${groups.length} stop${groups.length!==1?'s':''}${unchecked?' · '+unchecked+' item'+(unchecked!==1?'s':'')+' to collect':' · all done!'}</div>
+  </div>`;
+  el.innerHTML=routeHeader+groups.map((g,gi)=>`
     <div class="list-group">
-      <div class="list-group-hdr">${esc(g.name)}</div>
+      <div class="list-group-hdr">
+        <span class="stop-num">Stop ${gi+1}</span>
+        ${esc(g.name)}
+      </div>
       ${g.items.map(i=>`<div class="list-row${i.checked?' done':''}" id="lr-${i.id}">
         <button class="list-check" onclick="checkListItem('${i.id}')">${i.checked?'✓':''}</button>
         <div class="list-row-name">${esc(i.name)}</div>
